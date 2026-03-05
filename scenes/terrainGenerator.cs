@@ -27,7 +27,7 @@ public partial class TerrainGenerator : MeshInstance3D
         SurfaceTool st = new SurfaceTool();
         st.Begin(Mesh.PrimitiveType.Triangles);
 
-        // Step 1: Generate Vertices (The points in space)
+        // Generate Vertices
         for (int z = 0; z <= Depth; z++)
         {
             for (int x = 0; x <= Width; x++)
@@ -43,7 +43,7 @@ public partial class TerrainGenerator : MeshInstance3D
             }
         }
 
-        // Step 2: Generate Indices (Connecting the dots into triangles)
+        // Generate Indices
         for (int z = 0; z < Depth; z++)
         {
             for (int x = 0; x < Width; x++)
@@ -62,13 +62,12 @@ public partial class TerrainGenerator : MeshInstance3D
             }
         }
 
-        // Step 3: Calculate normals so lighting bounces off the terrain correctly
+        // Calculate normals so lighting bounces off the terrain correctly
         st.GenerateNormals();
         
         // Finalize the mesh and assign it to this MeshInstance3D
         this.Mesh = st.Commit();
 
-        // Step 4: Automatically generate collision for the boids to detect
         CreateCollision();
     }
 
