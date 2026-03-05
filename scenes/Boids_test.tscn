@@ -1,3 +1,107 @@
 [gd_scene format=3 uid="uid://cr6wx4yenm6cf"]
 
+[ext_resource type="Script" uid="uid://bfaxbc07dqp87" path="res://scripts/StreetViewController.cs" id="1_nwp6s"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_8l64f"]
+sky_top_color = Color(0.298039, 0.486275, 0.776471, 1)
+sky_horizon_color = Color(0.737255, 0.862745, 0.976471, 1)
+ground_bottom_color = Color(0.176471, 0.152941, 0.12549, 1)
+ground_horizon_color = Color(0.490196, 0.415686, 0.337255, 1)
+
+[sub_resource type="Sky" id="Sky_2v6bd"]
+sky_material = SubResource("ProceduralSkyMaterial_8l64f")
+
+[sub_resource type="Environment" id="Environment_8j34u"]
+background_mode = 2
+sky = SubResource("Sky_2v6bd")
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.129412, 0.407843, 0.321569, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_332y4"]
+size = Vector2(40, 40)
+subdivide_width = 4
+subdivide_depth = 4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_landmark"]
+albedo_color = Color(0.909804, 0.905882, 0.835294, 1)
+roughness = 0.65
+
+[sub_resource type="BoxMesh" id="BoxMesh_base"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_accent"]
+albedo_color = Color(0.968627, 0.713726, 0.282353, 1)
+roughness = 0.35
+
 [node name="BoidsTest" type="Node3D" unique_id=445983557]
+script = ExtResource("1_nwp6s")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=806813805]
+environment = SubResource("Environment_8j34u")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1969270491]
+transform = Transform3D(0.81915206, 0.4262504, -0.38379753, 0, 0.66913056, 0.74314487, 0.57357645, -0.6087487, 0.54811966, 0, 12, 0)
+light_energy = 2.0
+shadow_enabled = true
+
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=1962994778]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5987091)
+material_override = SubResource("StandardMaterial3D_ground")
+mesh = SubResource("PlaneMesh_332y4")
+
+[node name="Landmarks" type="Node3D" parent="." unique_id=142889585]
+
+[node name="BuildingA" type="MeshInstance3D" parent="Landmarks" unique_id=724164031]
+transform = Transform3D(1.2, 0, 0, 0, 2.2, 0, 0, 0, 1.2, -4, 1.1, -3)
+material_override = SubResource("StandardMaterial3D_landmark")
+mesh = SubResource("BoxMesh_base")
+
+[node name="BuildingB" type="MeshInstance3D" parent="Landmarks" unique_id=1755352954]
+transform = Transform3D(1.5, 0, 0, 0, 2.8, 0, 0, 0, 1.5, 4, 1.4, -3.5)
+material_override = SubResource("StandardMaterial3D_landmark")
+mesh = SubResource("BoxMesh_base")
+
+[node name="Kiosk" type="MeshInstance3D" parent="Landmarks" unique_id=373213350]
+transform = Transform3D(1.6, 0, 0, 0, 1.3, 0, 0, 0, 1.6, 0, 0.65, -6)
+material_override = SubResource("StandardMaterial3D_accent")
+mesh = SubResource("BoxMesh_base")
+
+[node name="Pillar" type="MeshInstance3D" parent="Landmarks" unique_id=296067245]
+transform = Transform3D(0.35, 0, 0, 0, 3.6, 0, 0, 0, 0.35, 0, 1.8, 1.6)
+material_override = SubResource("StandardMaterial3D_accent")
+mesh = SubResource("BoxMesh_base")
+
+[node name="NavigationPoints" type="Node3D" parent="." unique_id=519696488]
+
+[node name="Point00" type="Marker3D" parent="NavigationPoints" unique_id=1268889507]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+
+[node name="Point01" type="Marker3D" parent="NavigationPoints" unique_id=1936594748]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+
+[node name="Point02" type="Marker3D" parent="NavigationPoints" unique_id=1872491706]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 0, 0)
+
+[node name="Point03" type="Marker3D" parent="NavigationPoints" unique_id=2124769199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 0, 0)
+
+[node name="Point04" type="Marker3D" parent="NavigationPoints" unique_id=1176926772]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Point05" type="Marker3D" parent="NavigationPoints" unique_id=2104972574]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0, 3.8)
+
+[node name="Point06" type="Marker3D" parent="NavigationPoints" unique_id=609309164]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 0, 3.8)
+
+[node name="Arrows" type="Node3D" parent="." unique_id=811800638]
+
+[node name="PlayerRig" type="Node3D" parent="." unique_id=286556561]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 7)
+
+[node name="Camera3D" type="Camera3D" parent="PlayerRig" unique_id=1621777640]
+current = true
+fov = 78.0
