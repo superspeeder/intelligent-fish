@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 [Tool]
-public partial class TerrainGenerator : MeshInstance3D
+public partial class terrainGenerator : MeshInstance3D
 {
     // These [Export] attributes let you tweak the values right in the Godot Inspector
     [Export] public int Width = 50;
