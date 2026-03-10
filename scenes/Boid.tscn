@@ -3,22 +3,30 @@
 [ext_resource type="PackedScene" uid="uid://ceoc32u3pcm7m" path="res://Models/blender/fish.blend" id="1_n4whh"]
 [ext_resource type="Script" uid="uid://belu5yw8mfpsq" path="res://scripts/boid.gd" id="1_tbjv5"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vrn0v"]
-radius = 0.071777344
-height = 0.5449829
-
 [sub_resource type="SphereShape3D" id="SphereShape3D_hmpww"]
 radius = 3.0
 
-[node name="Boid" type="CharacterBody3D" unique_id=1743334357]
+[sub_resource type="SphereShape3D" id="SphereShape3D_tbjv5"]
+radius = 0.17960677
+
+[node name="Boid" type="Node3D" unique_id=897036004]
 script = ExtResource("1_tbjv5")
 
 [node name="fish" parent="." unique_id=1971053615 instance=ExtResource("1_n4whh")]
 
-[node name="body2" type="CollisionShape3D" parent="." unique_id=517242572]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.049224854, 2.1516866e-09, 0)
-shape = SubResource("CapsuleShape3D_vrn0v")
+[node name="detection_area" type="Area3D" parent="." unique_id=1103613447]
+collision_layer = 0
+collision_mask = 2
 
-[node name="rad_visualizer" type="CollisionShape3D" parent="." unique_id=309182398]
+[node name="rad_visualizer" type="CollisionShape3D" parent="detection_area" unique_id=309182398]
 shape = SubResource("SphereShape3D_hmpww")
-disabled = true
+
+[node name="boid_center" type="Area3D" parent="." unique_id=1526888788]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="boid_center" unique_id=1814462450]
+shape = SubResource("SphereShape3D_tbjv5")
+
+[connection signal="area_entered" from="detection_area" to="." method="_on_detection_area_area_entered"]
+[connection signal="area_exited" from="detection_area" to="." method="_on_detection_area_area_exited"]

@@ -1,19 +1,20 @@
-extends CharacterBody3D
+extends Node3D
 
-@onready var rad_visualizer = $rad_visualizer
+@onready var detection_area = $detection_area
 
 
 const SPEED = 5.0
 var boids_rad: float
-
+var velocity
 
 var parent:Node3D
 
+var nearby_boids: Array[Node3D] = []
+
 func _ready():
 	parent = get_parent_node_3d()
-	boids_rad = rad_visualizer.shape.radius ** 2 #square it so its faster
 	
-	velocity = Vector3()
+	velocity = Vector3(1,0,0)
 	
 
 func _physics_process(delta):
@@ -25,20 +26,38 @@ func _physics_process(delta):
 	#var rule5: Vector3 = Vector3(0, 0, 0) #goal seeking to be implemented
 	
 	var number_of_boids_near: int = 0;
-	for child in parent.get_children():
+	#var nearby_boids = detection_area.get_overlapping_bodies()
+	for child in nearby_boids:
 		if child == self: #ignore ourselves
 			continue
 		
 		var dist:Vector3 = child.position - self.position
 		
-		if dist.length_squared() > boids_rad: 
-			number_of_boids_near += 1
 		
 		rule1 = rule1 - dist
 		
 		rule2 = rule2 + child.position
 		
+		rule3 = rule3 + child.velocity
 		
-	
+		
+	#self.velocity
+	global_position += velocity * delta
 
-	move_and_slide()
+
+
+
+func _on_detection_area_area_entered(area):
+	if area.name == "boid_center":
+		var boid_node = area.get_parent()
+		if boid_node != self and not nearby_boids.has(boid_node): 
+			nearby_boids.append(boid_node)
+	pass # Replace with function body.
+
+
+func _on_detection_area_area_exited(area):
+	if area.name == "boid_center":
+		var boid_node = area.get_parent()
+		if boid_node != self: 
+			nearby_boids.erase(boid_node)
+	pass # Replace with function body.

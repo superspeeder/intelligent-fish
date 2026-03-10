@@ -16,7 +16,7 @@ func _ready():
 			randf_range(-1.0, 1.0), 
 			randf_range(-1.0, 1.0)
 		).normalized()
-		var spawn_vector = Vector3(1, 0, 0)
+		#var spawn_vector = Vector3(1, 0, 0)
 		#def a better way to do this but idk
 		boid.position = random_dir * (randf() * spawn_radius)
 		spawned_fish.emit()

@@ -35,7 +35,7 @@ transform = Transform3D(-0.7140241, 0.26356906, -0.64861465, 0.024495868, 0.9352
 
 [node name="Boids_manager" parent="." unique_id=413717302 instance=ExtResource("2_ptav2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.6072903, 0)
-num_boids = 200
+num_boids = 300
 spawn_radius = 10.0
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="." unique_id=980648519]
