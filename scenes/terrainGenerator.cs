@@ -4,7 +4,6 @@ using System;
 [Tool]
 public partial class terrainGenerator : MeshInstance3D
 {
-	// These [Export] attributes let you tweak the values right in the Godot Inspector
 	[Export] public int Width = 50;
 	[Export] public int Depth = 50;
 	[Export] public float HeightMultiplier = 15f;
@@ -12,12 +11,12 @@ public partial class terrainGenerator : MeshInstance3D
 
 	public override void _Ready()
 	{
-		// Fallback just in case you forget to assign a noise profile in the editor
+		// Fallback for noise if not implemented
 		if (Noise == null)
 		{
 			Noise = new FastNoiseLite();
 			Noise.NoiseType = FastNoiseLite.NoiseTypeEnum.Simplex;
-			Noise.Frequency = 0.03f; // Lower frequency means smoother, rolling underwater hills
+			Noise.Frequency = 0.03f; 
 		}
 
 		GenerateOceanFloor();
@@ -63,10 +62,10 @@ public partial class terrainGenerator : MeshInstance3D
 			}
 		}
 
-		// Calculate normals so lighting bounces off the terrain correctly
+		
 		st.GenerateNormals();
 		
-		// Finalize the mesh and assign it to this MeshInstance3D
+		
 		this.Mesh = st.Commit();
 
 		CreateCollision();
@@ -74,8 +73,8 @@ public partial class terrainGenerator : MeshInstance3D
 
 	private void CreateCollision()
 	{
-		// This built-in method takes the mesh we just generated and wraps a StaticBody3D 
-		// and CollisionShape3D around it perfectly.
+		// Takes the mesh we just generated and wraps a StaticBody3D 
+		// and CollisionShape3D around it.
 		this.CreateTrimeshCollision();
 	}
 }
