@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bn2hs85qfxewm"]
+
+[ext_resource type="Script" uid="uid://cu0hwkvjssgyn" path="res://scripts/boids_manager.gd" id="1_tvmlr"]
+
+[node name="Boids_manager" type="Node3D" unique_id=413717302]
+script = ExtResource("1_tvmlr")

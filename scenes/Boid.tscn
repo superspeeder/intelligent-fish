@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://b5k7c44mum3mi"]
+
+[ext_resource type="PackedScene" uid="uid://ceoc32u3pcm7m" path="res://Models/blender/fish.blend" id="1_n4whh"]
+[ext_resource type="Script" uid="uid://belu5yw8mfpsq" path="res://scripts/boid.gd" id="1_tbjv5"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vrn0v"]
+radius = 0.071777344
+height = 0.5449829
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hmpww"]
+radius = 3.0
+
+[node name="Boid" type="CharacterBody3D" unique_id=1743334357]
+script = ExtResource("1_tbjv5")
+
+[node name="fish" parent="." unique_id=1971053615 instance=ExtResource("1_n4whh")]
+
+[node name="body2" type="CollisionShape3D" parent="." unique_id=517242572]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.049224854, 2.1516866e-09, 0)
+shape = SubResource("CapsuleShape3D_vrn0v")
+
+[node name="rad_visualizer" type="CollisionShape3D" parent="." unique_id=309182398]
+shape = SubResource("SphereShape3D_hmpww")
+disabled = true

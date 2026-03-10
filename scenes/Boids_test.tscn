@@ -1,3 +1,61 @@
 [gd_scene format=3 uid="uid://cr6wx4yenm6cf"]
 
+[ext_resource type="Material" uid="uid://dfi286wb2ijve" path="res://materials/pool.tres" id="1_yjvlw"]
+[ext_resource type="PackedScene" uid="uid://bn2hs85qfxewm" path="res://scenes/boids_manager.tscn" id="2_ptav2"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yjvlw"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_ptav2"]
+sky_material = SubResource("ProceduralSkyMaterial_yjvlw")
+
+[sub_resource type="Environment" id="Environment_d0p0j"]
+background_mode = 2
+sky = SubResource("Sky_ptav2")
+tonemap_mode = 2
+glow_enabled = true
+
 [node name="BoidsTest" type="Node3D" unique_id=445983557]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=133624529]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=286511444]
+environment = SubResource("Environment_d0p0j")
+
+[node name="floor" type="CSGBox3D" parent="." unique_id=22811625]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.015159607, 0, 0.040332794)
+material_override = ExtResource("1_yjvlw")
+size = Vector3(25, 1, 25)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1457099416]
+transform = Transform3D(-0.7140241, 0.26356906, -0.64861465, 0.024495868, 0.9352697, 0.3530872, 0.6996925, 0.23622438, -0.67426145, -11.481313, 6.822529, -11.576435)
+
+[node name="Boids_manager" parent="." unique_id=413717302 instance=ExtResource("2_ptav2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.6072903, 0)
+num_boids = 200
+spawn_radius = 10.0
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="." unique_id=980648519]
+transform = Transform3D(0.8437386, -0.45442995, -0.28565466, 0.52125525, 0.82067025, 0.23407958, 0.1280555, -0.34640098, 0.92930514, 4.231505, 5.074375, 0.07319975)
+material_override = ExtResource("1_yjvlw")
+radius = 1.1699219
+height = 17.560272
+sides = 16
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=1239357316]
+transform = Transform3D(0.9844235, 0, -0.17581345, 0, 1, 0, 0.17581345, 0, 0.9844235, 2.4871206, 4.250784, -7.9121637)
+material_override = ExtResource("1_yjvlw")
+radius = 1.1687833
+radial_segments = 16
+rings = 12
+
+[node name="CSGTorus3D" type="CSGTorus3D" parent="." unique_id=2028418097]
+transform = Transform3D(-0.51002103, 0.7909665, 0.33800972, 0.25626886, 0.5148426, -0.8180852, -0.8210998, -0.33061922, -0.4652806, -1.5345993, 3.6801405, -1.8469887)
+material_override = ExtResource("1_yjvlw")
+inner_radius = 1.3977659
+outer_radius = 2.7471235
+sides = 16
+ring_sides = 12

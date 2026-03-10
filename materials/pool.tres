@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dfi286wb2ijve"]
+
+[ext_resource type="Texture2D" uid="uid://cu8i4o8udbc5x" path="res://Models/textures/blue_tile.jpg" id="1_83gis"]
+
+[resource]
+albedo_texture = ExtResource("1_83gis")
+uv1_scale = Vector3(0.4, 0.4, 0.4)
+uv1_triplanar = true
