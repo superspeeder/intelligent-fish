@@ -28,7 +28,6 @@ environment = SubResource("Environment_d0p0j")
 [node name="floor" type="CSGBox3D" parent="." unique_id=22811625]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.015159607, 0, 0.040332794)
 material_override = ExtResource("1_yjvlw")
-use_collision = true
 size = Vector3(25, 1, 25)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1457099416]
@@ -37,7 +36,6 @@ transform = Transform3D(-0.7140241, 0.26356906, -0.64861465, 0.024495868, 0.9352
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="." unique_id=980648519]
 transform = Transform3D(0.8437386, -0.45442995, -0.28565466, 0.52125525, 0.82067025, 0.23407958, 0.1280555, -0.34640098, 0.92930514, 4.231505, 5.074375, 0.07319975)
 material_override = ExtResource("1_yjvlw")
-use_collision = true
 radius = 1.1699219
 height = 17.560272
 sides = 16
@@ -45,7 +43,6 @@ sides = 16
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=1239357316]
 transform = Transform3D(0.9844235, 0, -0.17581345, 0, 1, 0, 0.17581345, 0, 0.9844235, 2.4871206, 4.250784, -7.9121637)
 material_override = ExtResource("1_yjvlw")
-use_collision = true
 radius = 1.1687833
 radial_segments = 16
 rings = 12
@@ -53,7 +50,6 @@ rings = 12
 [node name="CSGTorus3D" type="CSGTorus3D" parent="." unique_id=2028418097]
 transform = Transform3D(-0.51002103, 0.7909665, 0.33800972, 0.25626886, 0.5148426, -0.8180852, -0.8210998, -0.33061922, -0.4652806, -1.5345993, 3.6801405, -1.8469887)
 material_override = ExtResource("1_yjvlw")
-use_collision = true
 inner_radius = 1.3977659
 outer_radius = 2.7471235
 sides = 16
@@ -61,9 +57,3 @@ ring_sides = 12
 
 [node name="Boids" parent="." unique_id=1959174162 instance=ExtResource("2_yjvlw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2377844, 0)
-boid_vision_radius_squared = 16.0
-ray_length = 4.0
-rule1_strength = 0.7
-rule2_strength = 0.23
-rule3_strength = 2.86
-rule4_strength = 6.0
