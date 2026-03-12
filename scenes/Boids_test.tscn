@@ -61,9 +61,9 @@ ring_sides = 12
 
 [node name="Boids" parent="." unique_id=1959174162 instance=ExtResource("2_yjvlw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2377844, 0)
-boid_vision_radius_squared = 16.0
+boid_speed = 2.5
 ray_length = 4.0
-rule1_strength = 0.7
-rule2_strength = 0.23
+rule1_strength = 0.35
+rule2_strength = 0.58
 rule3_strength = 2.86
 rule4_strength = 6.0

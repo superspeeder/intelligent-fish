@@ -122,7 +122,7 @@ func _physics_process(delta):
 			rule2 = rule2 - boid_velocity.get(boid1)
 			rule3 = rule3 - boid_positions.get(boid1)
 		
-		var new_boid_velocity = boid_velocity.get(boid1)*2 + (rule1 * rule1_strength) + (rule2 * rule2_strength) + (rule3 * rule3_strength) + (rule4 * rule4_strength)
+		var new_boid_velocity = boid_velocity.get(boid1)*4 + (rule1 * rule1_strength) + (rule2 * rule2_strength) + (rule3 * rule3_strength) + (rule4 * rule4_strength)
 		
 		#update velocity and position
 		boid_velocity.set(boid1, new_boid_velocity.normalized() * boid_speed)
@@ -134,12 +134,14 @@ func _physics_process(delta):
 		
 		boid_positions.set(boid1, new_pos)
 		
+		var look_at_vel = Vector3(boid_velocity.get(boid1))
 		
 		
 		#update mesh
 		var look_target =  boid_positions.get(boid1) + boid_velocity.get(boid1)
 		boid_mesh[boid1].position = boid_positions.get(boid1)
 		boid_mesh[boid1].look_at(look_target,Vector3(0,1,0))
-		boid_mesh[boid1].rotate(Vector3(-1,0,0), PI/2)
-		boid_mesh[boid1].rotate(Vector3(0,1,0), PI/2)
+		boid_mesh[boid1].rotate_object_local(Vector3.FORWARD, -PI / 2)
+		boid_mesh[boid1].rotate_object_local(Vector3.RIGHT, PI / 2)
+		#boid_mesh[boid1].rotate(Vector3(0,1,0), PI/2)
 	pass
