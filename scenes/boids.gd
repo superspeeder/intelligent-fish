@@ -8,6 +8,7 @@ const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
 @export var spawn_radius:float = 20
 @export var boid_vision_radius_squared:float = 9
 @export var boid_speed:float = 1.5
+@export var boid_turn_speed:float = 1.5
 @export var ray_length:float = 1.5
 
 ##steer to avoid crowding local flockmates
@@ -113,7 +114,7 @@ func _physics_process(delta):
 			var hit_point = collision.position
 			var obstical_distance = boid_positions.get(boid1).distance_to(hit_point)
 			var panic_multiplier = 1 / max(obstical_distance, 0.1) #stronger the closer we are to a wall
-			rule4 = wall_normal * panic_multiplier
+			rule4 = (wall_normal +boid_velocity.get(boid1).normalized().bounce(wall_normal))  * panic_multiplier
 		
 		if number_of_boids_near != 0:#average that shit crazy style
 			rule2 = rule2 / number_of_boids_near
@@ -122,10 +123,13 @@ func _physics_process(delta):
 			rule2 = rule2 - boid_velocity.get(boid1)
 			rule3 = rule3 - boid_positions.get(boid1)
 		
-		var new_boid_velocity = boid_velocity.get(boid1)*4 + (rule1 * rule1_strength) + (rule2 * rule2_strength) + (rule3 * rule3_strength) + (rule4 * rule4_strength)
+		#apply all forces/ rules and turn that shit
+		var steering_force = (rule1 * rule1_strength) + (rule2 * rule2_strength) + (rule3 * rule3_strength) + (rule4 * rule4_strength)
+		var current_vel = boid_velocity.get(boid1)
 		
-		#update velocity and position
-		boid_velocity.set(boid1, new_boid_velocity.normalized() * boid_speed)
+		var target_vel = (current_vel + steering_force).normalized() * boid_speed
+		var new_boid_velocity = current_vel.lerp(target_vel, delta * boid_turn_speed) 
+		boid_velocity.set(boid1, new_boid_velocity)
 		
 		var new_pos = boid_positions.get(boid1) + boid_velocity.get(boid1) * delta
 		new_pos.x = wrapf(new_pos.x, -boundary_size, boundary_size)
@@ -141,7 +145,8 @@ func _physics_process(delta):
 		var look_target =  boid_positions.get(boid1) + boid_velocity.get(boid1)
 		boid_mesh[boid1].position = boid_positions.get(boid1)
 		boid_mesh[boid1].look_at(look_target,Vector3(0,1,0))
-		boid_mesh[boid1].rotate_object_local(Vector3.FORWARD, -PI / 2)
+		boid_mesh[boid1].rotate_object_local(Vector3.FORWARD, -PI / 2 )
 		boid_mesh[boid1].rotate_object_local(Vector3.RIGHT, PI / 2)
+		boid_mesh[boid1].rotate_object_local(Vector3.FORWARD, .5)
 		#boid_mesh[boid1].rotate(Vector3(0,1,0), PI/2)
 	pass
