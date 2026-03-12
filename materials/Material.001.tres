@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c6ep6c04raumi"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_gdxtg"]
+load_path = "res://.godot/imported/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02.jpg-2ca6dbd800ed7de7abda8079191e50f6.s3tc.ctex"
+
+[resource]
+resource_name = "Material.001"
+cull_mode = 2
+shading_mode = 0
+albedo_texture = SubResource("CompressedTexture2D_gdxtg")

@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://debkgunmxo0o8"
-path.s3tc="res://.godot/imported/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02.jpg-2ca6dbd800ed7de7abda8079191e50f6.s3tc.ctex"
+uid="uid://ccs6ceg23b4yx"
+path.s3tc="res://.godot/imported/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02.jpg-957d72a25e42ded34071666ab0cea3fe.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Models/blender/textures/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02.jpg"
-dest_files=["res://.godot/imported/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02.jpg-2ca6dbd800ed7de7abda8079191e50f6.s3tc.ctex"]
+source_file="res://Models/textures/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02.jpg"
+dest_files=["res://.godot/imported/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02.jpg-957d72a25e42ded34071666ab0cea3fe.s3tc.ctex"]
 
 [params]
 
