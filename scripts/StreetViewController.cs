@@ -26,6 +26,8 @@ public partial class StreetViewController : Node3D
     [Export] public float MaxLinkDistanceMeters = 5.5f;
     [Export] public int MaxNeighborCount = 3;
     [Export] public float ArrowHeightMeters = 0.03f;
+    [Export] public float GroundSnapProbeHeightMeters = 32.0f;
+    [Export] public float GroundSnapDistanceMeters = 96.0f;
 
     [ExportCategory("FreeFly")]
     [Export] public float FreeFlySpeedMetersPerSecond = 8.0f;
@@ -44,6 +46,7 @@ public partial class StreetViewController : Node3D
     private MovementMode _currentMode;
     private int _currentIndex;
     private bool _isMoving;
+    private Tween _moveTween = null;
     private float _yaw;
     private float _pitch;
 
@@ -182,6 +185,7 @@ public partial class StreetViewController : Node3D
 
     private void EnterStreetViewMode()
     {
+        StopMoveTween();
         if (_points.Count < 2)
         {
             GD.PushWarning("StreetView mode needs at least 2 navigation points. Falling back to FreeFly.");
@@ -203,6 +207,7 @@ public partial class StreetViewController : Node3D
 
     private void EnterFreeFlyMode()
     {
+        StopMoveTween();
         _isMoving = false;
         ClearArrows();
         Input.MouseMode = Input.MouseModeEnum.Captured;
@@ -287,14 +292,16 @@ public partial class StreetViewController : Node3D
             ApplyLookRotation();
         }
 
-        Tween tween = CreateTween();
-        tween.SetTrans(Tween.TransitionType.Sine);
-        tween.SetEase(Tween.EaseType.InOut);
-        tween.TweenProperty(_playerRig, "global_position", ToEyePosition(_points[targetIndex].GlobalPosition), MoveDurationSeconds);
-        tween.Finished += () =>
+        StopMoveTween();
+        _moveTween = CreateTween();
+        _moveTween.SetTrans(Tween.TransitionType.Sine);
+        _moveTween.SetEase(Tween.EaseType.InOut);
+        _moveTween.TweenProperty(_playerRig, "global_position", ToEyePosition(_points[targetIndex].GlobalPosition), MoveDurationSeconds);
+        _moveTween.Finished += () =>
         {
             _currentIndex = targetIndex;
             _isMoving = false;
+            _moveTween = null;
             RefreshArrows();
         };
     }
@@ -326,7 +333,7 @@ public partial class StreetViewController : Node3D
                 continue;
             }
 
-            float distance = source.DistanceTo(_points[i].GlobalPosition);
+            float distance = HorizontalDistance(source, _points[i].GlobalPosition);
             if (distance <= MaxLinkDistanceMeters)
             {
                 candidates.Add((i, distance));
@@ -342,7 +349,7 @@ public partial class StreetViewController : Node3D
                     continue;
                 }
 
-                candidates.Add((i, source.DistanceTo(_points[i].GlobalPosition)));
+                candidates.Add((i, HorizontalDistance(source, _points[i].GlobalPosition)));
             }
         }
 
@@ -372,7 +379,7 @@ public partial class StreetViewController : Node3D
 
         Vector3 forward = direction / distance;
         Vector3 arrowPosition = from + forward * Mathf.Clamp(distance * 0.45f, 1.0f, 2.6f);
-        arrowPosition.Y = ArrowHeightMeters;
+        arrowPosition = GetGroundedBasePosition(arrowPosition) + Vector3.Up * ArrowHeightMeters;
 
         Area3D area = new Area3D();
         area.Name = $"ArrowTo{targetIndex:00}";
@@ -412,7 +419,7 @@ public partial class StreetViewController : Node3D
 
         for (int i = 0; i < _points.Count; i++)
         {
-            float distance = position.DistanceSquaredTo(_points[i].GlobalPosition);
+            float distance = HorizontalDistanceSquared(position, _points[i].GlobalPosition);
             if (distance < bestDistance)
             {
                 bestDistance = distance;
@@ -453,7 +460,7 @@ public partial class StreetViewController : Node3D
 
     private Vector3 ToEyePosition(Vector3 basePosition)
     {
-        return basePosition + Vector3.Up * EyeHeightMeters;
+        return GetGroundedBasePosition(basePosition) + Vector3.Up * EyeHeightMeters;
     }
 
     private void ApplyLookRotation()
@@ -468,5 +475,45 @@ public partial class StreetViewController : Node3D
         {
             child.QueueFree();
         }
+    }
+
+    private void StopMoveTween()
+    {
+        if (GodotObject.IsInstanceValid(_moveTween))
+        {
+            _moveTween.Kill();
+        }
+
+        _moveTween = null;
+        _isMoving = false;
+    }
+
+    private Vector3 GetGroundedBasePosition(Vector3 basePosition)
+    {
+        Vector3 rayOrigin = basePosition + Vector3.Up * GroundSnapProbeHeightMeters;
+        Vector3 rayEnd = basePosition + Vector3.Down * GroundSnapDistanceMeters;
+        PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(rayOrigin, rayEnd);
+        query.CollideWithAreas = false;
+        query.CollideWithBodies = true;
+
+        var hit = GetWorld3D().DirectSpaceState.IntersectRay(query);
+        if (hit.Count == 0)
+        {
+            return basePosition;
+        }
+
+        return hit["position"].AsVector3();
+    }
+
+    private static float HorizontalDistance(Vector3 a, Vector3 b)
+    {
+        return Mathf.Sqrt(HorizontalDistanceSquared(a, b));
+    }
+
+    private static float HorizontalDistanceSquared(Vector3 a, Vector3 b)
+    {
+        float dx = a.X - b.X;
+        float dz = a.Z - b.Z;
+        return dx * dx + dz * dz;
     }
 }

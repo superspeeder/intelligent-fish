@@ -73,8 +73,16 @@ public partial class terrainGenerator : MeshInstance3D
 
 	private void CreateCollision()
 	{
-		// Takes the mesh we just generated and wraps a StaticBody3D 
-		// and CollisionShape3D around it.
+		// Regenerate collision cleanly so repeated editor/runtime refreshes
+		// do not keep stacking OceanFloor_col nodes under this mesh.
+		foreach (Node child in GetChildren())
+		{
+			if (child is StaticBody3D)
+			{
+				child.Free();
+			}
+		}
+
 		this.CreateTrimeshCollision();
 	}
 }
