@@ -23,7 +23,7 @@ const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
 @export_range(0.0, 6.0, 0.01) var rule4_strength: float = 1
 #@export_range(0.0, 6.0, 0.01) var rule5_strength: float = 1
 
-@export var boundary_size: float = 10
+@export var boundary_size: float = 150
 
 ##show raycasts
 @export var show_debug_rays: bool = true
@@ -192,7 +192,7 @@ func _physics_process(delta):
 		#wrap around to the other side the boundy
 		var new_pos = boid_positions.get(boid1) + boid_velocity.get(boid1) * delta
 		new_pos.x = wrapf(new_pos.x, -boundary_size, boundary_size)
-		new_pos.y = wrapf(new_pos.y, -boundary_size, boundary_size)
+		new_pos.y = wrapf(new_pos.y, -10, 10)
 		new_pos.z = wrapf(new_pos.z, -boundary_size, boundary_size)
 		
 		boid_positions.set(boid1, new_pos)
