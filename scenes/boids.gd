@@ -3,6 +3,8 @@ extends Node3D
 const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
 
 ####This shit be using the packed vector for performance
+@export var boid_mesh_resource: Mesh
+@export var boid_material_resource: Material
 
 @export var num_boids:int = 200
 @export var spawn_radius:float = 20
@@ -23,12 +25,34 @@ const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
 
 @export var boundary_size: float = 10
 
+
 var boid_positions := PackedVector3Array()
 var boid_velocity := PackedVector3Array()
-var boid_mesh: Array[Node3D] = []
+
+
+var boid_meshs: MultiMeshInstance3D = MultiMeshInstance3D.new();
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	
+	
+	var multi_mesh = MultiMesh.new()
+	multi_mesh.transform_format = MultiMesh.TRANSFORM_3D
+	multi_mesh.use_custom_data = true
+	multi_mesh.instance_count = num_boids
+	
+	multi_mesh.mesh = boid_mesh_resource
+	
+	for i in range(num_boids):
+		
+		multi_mesh.set_instance_custom_data(i, Color(randf(), randf(), randf(), randf()))
+
+	
+	boid_meshs.multimesh = multi_mesh
+	boid_meshs.material_override = boid_material_resource
+	
+	add_child(boid_meshs)
+	
 	for i in range(num_boids):
 		#spawn location stuff
 		var random_dir = Vector3(
@@ -43,14 +67,11 @@ func _ready():
 		).normalized()
 		
 		var boid_position = random_dir * randf() * spawn_radius
-		var boid:Node3D = boid_res.instantiate()
+		#var boid:Node3D = boid_res.instantiate()
 		
 		boid_positions.append(boid_position)
 		boid_velocity.append(random_vel)
 		
-		boid.position = boid_position
-		add_child(boid)
-		boid_mesh.append(boid)
 		
 	pass # Replace with function body.
 
@@ -61,6 +82,7 @@ func _physics_process(delta):
 	#todo optimization step where this is called every random range of frames (actually unsure how possible this is)
 	#todo octree optimizations
 	#todo multi threading
+	#todo interaction limiting
 	
 	#idk if it matters in godot but im gonna put these here so it avoids alocating and dealocating memory
 	var number_of_boids_near: int = 0;
@@ -138,15 +160,24 @@ func _physics_process(delta):
 		
 		boid_positions.set(boid1, new_pos)
 		
-		var look_at_vel = Vector3(boid_velocity.get(boid1))
 		
+		update_boid_transform(boid1, boid_positions.get(boid1) , boid_velocity.get(boid1))
 		
-		#update mesh
-		var look_target =  boid_positions.get(boid1) + boid_velocity.get(boid1)
-		boid_mesh[boid1].position = boid_positions.get(boid1)
-		boid_mesh[boid1].look_at(look_target,Vector3(0,1,0))
-		boid_mesh[boid1].rotate_object_local(Vector3.FORWARD, -PI / 2 )
-		boid_mesh[boid1].rotate_object_local(Vector3.RIGHT, PI / 2)
-		boid_mesh[boid1].rotate_object_local(Vector3.FORWARD, .5)
-		#boid_mesh[boid1].rotate(Vector3(0,1,0), PI/2)
+
+	pass
+
+
+
+func update_boid_transform(index: int, pos: Vector3, vel: Vector3):
+	var look_target =  boid_positions.get(index) + boid_velocity.get(index)
+	
+	var transform := Transform3D()
+	transform.origin = boid_positions.get(index)
+	if not boid_positions.get(index).is_equal_approx(look_target): #in case errors :)
+			transform = transform.looking_at(look_target, Vector3.UP)
+			
+	transform = transform.rotated_local(Vector3.UP, PI / 2 )
+
+	
+	boid_meshs.multimesh.set_instance_transform(index, transform)
 	pass

@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://da15u6jcylm4u"]
 
 [ext_resource type="Script" uid="uid://dy54j53k3kkts" path="res://scenes/boids.gd" id="1_8umrw"]
+[ext_resource type="ArrayMesh" uid="uid://x4uatb5wxx86" path="res://Models/mesh/fish_mesh.mesh" id="2_c2gps"]
+[ext_resource type="Material" uid="uid://gp3bmh7n07um" path="res://materials/fish__shader.material" id="3_aquj1"]
 
 [node name="Boids" type="Node3D" unique_id=1959174162]
 script = ExtResource("1_8umrw")
+boid_mesh_resource = ExtResource("2_c2gps")
+boid_material_resource = ExtResource("3_aquj1")

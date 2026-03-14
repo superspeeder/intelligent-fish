@@ -43,7 +43,7 @@ height = 17.560272
 sides = 16
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=1239357316]
-transform = Transform3D(0.9844235, 0, -0.17581345, 0, 1, 0, 0.17581345, 0, 0.9844235, 2.4871206, 4.250784, -7.9121637)
+transform = Transform3D(0.9840585, 0.17726663, 0.014327034, -0.1758782, 0.9580678, 0.22621451, 0.026374012, -0.22512814, 0.9739721, 2.4871206, 4.250784, -7.9121637)
 material_override = ExtResource("1_yjvlw")
 use_collision = true
 radius = 1.1687833
@@ -61,10 +61,16 @@ ring_sides = 12
 
 [node name="Boids" parent="." unique_id=1959174162 instance=ExtResource("2_yjvlw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2377844, 0)
-num_boids = 300
-boid_speed = 2.5
+num_boids = 350
+boid_speed = 2.0
 ray_length = 4.0
 rule1_strength = 0.35
 rule2_strength = 0.58
 rule3_strength = 0.58
 rule4_strength = 6.0
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=125510028]
+transform = Transform3D(0.883971, -0.4418927, -0.15272982, 0.43116164, 0.89680153, -0.099231444, 0.18081796, 0.0218665, 0.9832736, -6.777546, 5.957245, 1.499785)
+material_override = ExtResource("1_yjvlw")
+use_collision = true
+size = Vector3(2.921692, 2.9538574, 2.7355957)

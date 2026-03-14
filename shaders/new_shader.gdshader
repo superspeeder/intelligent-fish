@@ -13,7 +13,7 @@ uniform float twist  = .1;
 
 void vertex() {
 	// Called for every vertex the material is visible on.
-	float time = TIME * time_scale;
+	float time = (TIME * time_scale) + (6.28318 * INSTANCE_CUSTOM.x);
 	VERTEX.z += cos(time)*side_to_side;
 	
 	float pivot_angle = cos(time) * 0.1 * pivot;
