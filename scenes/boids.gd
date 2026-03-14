@@ -25,6 +25,11 @@ const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
 
 @export var boundary_size: float = 10
 
+##show raycasts
+@export var show_debug_rays: bool = true
+var debug_mesh_instance: MeshInstance3D
+var debug_mesh: ImmediateMesh
+
 
 var boid_positions := PackedVector3Array()
 var boid_velocity := PackedVector3Array()
@@ -52,6 +57,20 @@ func _ready():
 	boid_meshs.material_override = boid_material_resource
 	
 	add_child(boid_meshs)
+	
+	
+	#for debugging the raycast
+	debug_mesh_instance = MeshInstance3D.new()
+	debug_mesh = ImmediateMesh.new()
+	debug_mesh_instance.mesh = debug_mesh
+	debug_mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	
+	var line_material = StandardMaterial3D.new()
+	line_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	line_material.vertex_color_use_as_albedo = true
+	debug_mesh_instance.material_override = line_material
+	
+	add_child(debug_mesh_instance)
 	
 	for i in range(num_boids):
 		#spawn location stuff
@@ -90,6 +109,11 @@ func _physics_process(delta):
 	
 	var space_state = get_world_3d().direct_space_state
 	
+	#debug
+	debug_mesh.clear_surfaces()
+	if show_debug_rays:
+		debug_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+	
 	#iterate through all boids
 	for boid1 in range(num_boids):
 		#rules for boids
@@ -116,9 +140,9 @@ func _physics_process(delta):
 			
 			#mmk now do some vector math lets a go wahoo! (reference to the game series super mario in case you didnt know)
 			var diff = boid_positions.get(boid1) - boid_positions.get(boid2)
-			var distance = diff.length()
+			var distance = diff.length_squared()
 			if distance > 0.001: 
-				rule1 += (diff.normalized() / distance)
+				rule1 += (diff / distance)
 			
 			rule2 = rule2 + boid_velocity.get(boid2)
 			
@@ -130,13 +154,25 @@ func _physics_process(delta):
 		
 		var query = PhysicsRayQueryParameters3D.create(start_of_ray, end_of_ray)
 		var collision = space_state.intersect_ray(query)
-		
+		var obstacle_importance_modifier = boid_turn_speed
+		var dynamic_turn_speed = boid_turn_speed
 		if !collision.is_empty():
 			var wall_normal = collision.normal
 			var hit_point = collision.position
 			var obstical_distance = boid_positions.get(boid1).distance_to(hit_point)
-			var panic_multiplier = 1 / max(obstical_distance, 0.1) #stronger the closer we are to a wall
+			var panic_multiplier = 3.0 / max(obstical_distance, 0.1) #stronger the closer we are to a wall
 			rule4 = (wall_normal +boid_velocity.get(boid1).normalized().bounce(wall_normal))  * panic_multiplier
+			obstacle_importance_modifier = boid_turn_speed + (panic_multiplier * 10.0)
+		
+		#debug
+		if show_debug_rays:
+			if collision.is_empty():
+				debug_mesh.surface_set_color(Color.GREEN) # safe path
+			else:
+				debug_mesh.surface_set_color(Color.RED)   # hitting an obstacle
+				
+			debug_mesh.surface_add_vertex(start_of_ray)
+			debug_mesh.surface_add_vertex(end_of_ray)
 		
 		if number_of_boids_near != 0:#average that shit crazy style
 			rule2 = rule2 / number_of_boids_near
@@ -146,13 +182,14 @@ func _physics_process(delta):
 			rule3 = rule3 - boid_positions.get(boid1)
 		
 		#apply all forces/ rules and turn that shit
-		var steering_force = (rule1 * rule1_strength) + (rule2 * rule2_strength) + (rule3 * rule3_strength) + (rule4 * rule4_strength)
+		var steering_force = ((rule1 * rule1_strength) + (rule2 * rule2_strength) + (rule3 * rule3_strength))/obstacle_importance_modifier  + (rule4 * rule4_strength)
 		var current_vel = boid_velocity.get(boid1)
 		
-		var target_vel = (current_vel + steering_force).normalized() * boid_speed
+		var target_vel = (current_vel + steering_force ).normalized() * boid_speed
 		var new_boid_velocity = current_vel.lerp(target_vel, delta * boid_turn_speed) 
 		boid_velocity.set(boid1, new_boid_velocity)
 		
+		#wrap around to the other side the boundy
 		var new_pos = boid_positions.get(boid1) + boid_velocity.get(boid1) * delta
 		new_pos.x = wrapf(new_pos.x, -boundary_size, boundary_size)
 		new_pos.y = wrapf(new_pos.y, -boundary_size, boundary_size)
@@ -162,22 +199,25 @@ func _physics_process(delta):
 		
 		
 		update_boid_transform(boid1, boid_positions.get(boid1) , boid_velocity.get(boid1))
-		
+	
+	#debug
+	if show_debug_rays:
+		debug_mesh.surface_end()
 
 	pass
 
 
 
 func update_boid_transform(index: int, pos: Vector3, vel: Vector3):
-	var look_target =  boid_positions.get(index) + boid_velocity.get(index)
+	var look_target =  pos + vel
 	
-	var transform := Transform3D()
-	transform.origin = boid_positions.get(index)
-	if not boid_positions.get(index).is_equal_approx(look_target): #in case errors :)
-			transform = transform.looking_at(look_target, Vector3.UP)
+	var trans := Transform3D()
+	trans.origin = pos
+	if not pos.is_equal_approx(look_target): #in case errors :)
+			trans = trans.looking_at(look_target, Vector3.UP)
 			
-	transform = transform.rotated_local(Vector3.UP, PI / 2 )
+	trans = trans.rotated_local(Vector3.UP, PI / 2 )
 
 	
-	boid_meshs.multimesh.set_instance_transform(index, transform)
+	boid_meshs.multimesh.set_instance_transform(index, trans)
 	pass
