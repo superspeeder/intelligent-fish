@@ -162,7 +162,7 @@ func _physics_process(delta):
 			var obstical_distance = boid_positions.get(boid1).distance_to(hit_point)
 			var panic_multiplier = 3.0 / max(obstical_distance, 0.1) #stronger the closer we are to a wall
 			rule4 = (wall_normal +boid_velocity.get(boid1).normalized().bounce(wall_normal))  * panic_multiplier
-			obstacle_importance_modifier = boid_turn_speed + (panic_multiplier * 10.0)
+			obstacle_importance_modifier = boid_turn_speed + (panic_multiplier * 5.0)
 		
 		#debug
 		if show_debug_rays:

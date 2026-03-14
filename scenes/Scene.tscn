@@ -159,7 +159,7 @@ shape = SubResource("ConvexPolygonShape3D_i2t4f")
 
 [node name="Boids" parent="." unique_id=1959174162 instance=ExtResource("5_i2t4f")]
 num_boids = 350
-spawn_radius = 10.0
+spawn_radius = 5.0
 boid_vision_radius_squared = 5.0
 boid_turn_speed = 4.0
 ray_length = 3.0
