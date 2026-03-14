@@ -178,3 +178,15 @@ public class RandomSequence<T> : BehaviorTree<T> {
         return false;
     }
 }
+
+public class Behavior<T> : BehaviorTree<T> {
+    private Func<T, bool> action;
+
+    public Behavior(Func<T, bool> action) {
+        this.action = action;
+    }
+    
+    public override bool Execute(T data) {
+        return action(data);
+    }
+}

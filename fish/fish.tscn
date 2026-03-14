@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://p8s3hmwsjnid"]
+
+[ext_resource type="Script" uid="uid://cg5t87ru34yly" path="res://fish/Fish.cs" id="1_jx7ej"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jx7ej"]
+bounce = 0.6
+absorbent = true
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_pxh1u"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_pxh1u"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jx7ej"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jx7ej"]
+albedo_color = Color(0, 1, 0, 1)
+
+[node name="Fish" type="RigidBody3D" unique_id=908810632]
+physics_material_override = SubResource("PhysicsMaterial_jx7ej")
+gravity_scale = 0.0
+angular_damp = 0.2
+script = ExtResource("1_jx7ej")
+TurningStrength = 10.0
+MovementStrength = 15.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1613954172]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_pxh1u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1558333861]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_pxh1u")
+
+[node name="Laser" type="Node3D" parent="." unique_id=1166252743]
+visible = false
+
+[node name="Laser" type="MeshInstance3D" parent="Laser" unique_id=2051024081]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 2)
+mesh = SubResource("CylinderMesh_jx7ej")
+surface_material_override/0 = SubResource("StandardMaterial3D_jx7ej")
