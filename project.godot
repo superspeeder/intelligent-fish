@@ -11,12 +11,17 @@ config_version=5
 [application]
 
 config/name="IntelligentFish"
+run/main_scene="uid://cpgtlf0ahergc"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [dotnet]
 
 project/assembly_name="IntelligentFish"
+
+[filesystem]
+
+import/blender/enabled=false
 
 [physics]
 
