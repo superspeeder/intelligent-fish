@@ -1,4 +1,5 @@
 extends Node3D
+class_name Boids
 
 const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
 

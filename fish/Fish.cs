@@ -20,12 +20,28 @@ namespace Behaviors {
                     .Normalized();
                 var basis = Basis.LookingAt(turn, Vector3.Up);
                 data.TargetDirection = basis.Z;
+                GD.Print(data.Name + ": WANDER");
             }
 
             return true;
         }
     }
 
+    class TargetBoid : BehaviorTree<Fish> {
+        public override bool Execute(Fish data) {
+            var boid_positions = data.boids.Get("boid_positions").AsVector3Array();
+            var boid_count = data.boids.Get("num_boids").AsInt32();
+            var boid_id = data.Rng.RandiRange(0, boid_count);
+            if (boid_positions[boid_id].DistanceSquaredTo(data.GlobalPosition) < 1225f) {
+                data.TargetedBoid = boid_id;
+                data.BoidIsTargeted = true;
+                return true;
+            }
+
+            return false;
+        }
+    }
+    
     class Fight : BehaviorTree<Fish> {
         public override bool Execute(Fish data) {
             var closestDistance2 = float.PositiveInfinity;
@@ -44,7 +60,7 @@ namespace Behaviors {
             if (closest != null) {
                 data.FocusTimer = 3.0f;
                 data.TargetedFish = closest;
-                GD.Print("FIGHT");
+                GD.Print(data.Name + ": FIGHT");
                 return true;
             }
 
@@ -84,21 +100,6 @@ namespace Behaviors {
         }
     }
 
-    class FocusedBehavior : BehaviorTree<Fish> {
-        public float FocusTime = 0.0f;
-        private BehaviorTree<Fish> child;
-
-        public FocusedBehavior(float focusTime, BehaviorTree<Fish> child) {
-            FocusTime = focusTime;
-            this.child = child;
-        }
-
-        public override bool Execute(Fish data) {
-            data.FocusTimer = FocusTime;
-            return child.Execute(data);
-        }
-    }
-
     class Debug : BehaviorTree<Fish> {
         private readonly string _text;
 
@@ -107,45 +108,8 @@ namespace Behaviors {
         }
 
         public override bool Execute(Fish data) {
-            GD.Print(_text);
+            GD.Print(data.Name + ": " + _text);
             return true;
-        }
-    }
-
-    abstract class GotoLocation : BehaviorTree<Fish> {
-        public float SpeedModifier = 1.0f;
-        public float SnapModifier = 1.0f;
-
-        public override bool Execute(Fish data) {
-            data.SpeedModifier = SpeedModifier;
-            data.SnapModifier = SnapModifier;
-            data.TargetDirection = data.GlobalPosition.DirectionTo(Location(data));
-            return true;
-        }
-
-        public abstract Vector3 Location(Fish data);
-    }
-
-    class GotoCall : GotoLocation {
-        public override bool Execute(Fish data) {
-            data.WasCalled = false;
-            GD.Print("GOTO CALL");
-            return base.Execute(data);
-        }
-
-        public override Vector3 Location(Fish data) {
-            return data.CallLocation;
-        }
-    }
-
-    class GotoCenter : GotoLocation {
-        public override bool Execute(Fish data) {
-            GD.Print("GOTO CENTER");
-            return base.Execute(data);
-        }
-
-        public override Vector3 Location(Fish data) {
-            return Vector3.Zero;
         }
     }
 
@@ -160,15 +124,7 @@ namespace Behaviors {
                 }
             }
 
-            return count > 3;
-        }
-    }
-
-    class RunAway : BehaviorTree<Fish> {
-        public override bool Execute(Fish data) {
-            data.SpeedModifier = 3.0f;
-            data.SnapModifier = 6.0f;
-            return true;
+            return count > 1;
         }
     }
 
@@ -183,21 +139,21 @@ namespace Behaviors {
         }
     }
 
-    class FocusedFight : BehaviorTree<Fish> {
-        public override bool Execute(Fish data) {
-            if (data.TargetedFish != null && data.FocusTimer > 0) {
-                data.TargetDirection = data.GlobalPosition.DirectionTo(data.TargetedFish.GlobalPosition);
-            }
-
-            return false;
-        }
-    }
-
     class ClearFocus : BehaviorTree<Fish> {
         public override bool Execute(Fish data) {
+            if (data.BoidIsTargeted) {
+                var boid_positions = data.boids.Get("boid_positions").AsVector3Array();
+                var pos = boid_positions[data.TargetedBoid];
+                if (data.GlobalPosition.DistanceSquaredTo(pos) > 25f) {
+                    data.FocusTimer = 3.0f;
+                    GD.Print(data.Name + ": RETARGET BOID");
+                    return true; // Stop execution here
+                }
+            }
             data.TargetedFish = null;
             data.FocusTimer = 0f;
             data.LocationIsTargeted = false;
+            data.BoidIsTargeted = false;
             return false;
         }
     }
@@ -263,6 +219,7 @@ public partial class Fish : RigidBody3D {
     [Export] public float MovementStrength = 5.0f;
     [Export] public float MaxSpeed = 30.0f;
     [Export] public float TetherDistance = 50f;
+    [Export] public Node boids;
 
     public FishState State = FishState.Idle;
 
@@ -280,6 +237,9 @@ public partial class Fish : RigidBody3D {
     public Vector3 TargetedLocation = Vector3.Zero;
     public bool LocationIsTargeted = false;
 
+    public int TargetedBoid = 0;
+    public bool BoidIsTargeted = false;
+
     private bool clearFocus(Fish fish) {
         TargetedFish = null;
         FocusTimer = 0.0f;
@@ -291,6 +251,7 @@ public partial class Fish : RigidBody3D {
         Laser = GetNode<Node3D>("Laser");
         Rng = new RandomNumberGenerator();
         Rng.Seed = (ulong)Random.Shared.NextInt64();
+        
 
         var isFocused = new Behavior<Fish>(_ => FocusTimer > 0f);
         var focusedFight = new Sequence<Fish>(
@@ -301,11 +262,18 @@ public partial class Fish : RigidBody3D {
             },
             new Behaviors.Target(_ => TargetedFish.GlobalPosition)
         );
-
-
+        
         var focusedTravel = new Sequence<Fish>(
             new Behavior<Fish>(_ => LocationIsTargeted),
             new Behaviors.Target(_ => TargetedLocation)
+        );
+
+        var focusedEat = new Sequence<Fish>(
+            new Behavior<Fish>(_ => BoidIsTargeted),
+            new Behaviors.Target(_ => {
+                var boid_positions = boids.Get("boid_positions").AsVector3Array();
+                return boid_positions[TargetedBoid];
+            })
         );
 
         var gotoCall = new Sequence<Fish>(
@@ -314,7 +282,7 @@ public partial class Fish : RigidBody3D {
                 WasCalled = false;
                 return true;
             }),
-            new Behaviors.Focus(30.0f),
+            new Behaviors.Focus(20.0f),
             new Behaviors.Modifiers {
                 SnapModifier = 3.0f,
                 SpeedModifier = 2.0f
@@ -323,9 +291,19 @@ public partial class Fish : RigidBody3D {
             new Behaviors.Target(_ => CallLocation, true)
         );
 
+        var eatBoid = new Sequence<Fish>(
+            new Behaviors.Focus(8.0f),
+            new Behaviors.Modifiers {
+                SnapModifier = 3.0f,
+                SpeedModifier = 5.0f
+            },
+            new Behaviors.TargetBoid(),
+            new Behaviors.Debug("TARGET BOID")
+        );
+
         var tether = new Sequence<Fish>(
             new Behavior<Fish>(_ => GlobalPosition.DistanceSquaredTo(Vector3.Zero) >= 2500f),
-            new Behaviors.Focus(30.0f),
+            new Behaviors.Focus(20.0f),
             new Behaviors.Modifiers {
                 SpeedModifier = 1.5f,
                 SnapModifier = 3.0f
@@ -356,6 +334,7 @@ public partial class Fish : RigidBody3D {
                 isFocused,
                 new Selector<Fish>(
                     focusedFight,
+                    focusedEat,
                     focusedTravel
                 )
             ),
@@ -369,6 +348,7 @@ public partial class Fish : RigidBody3D {
             tether,
             runFromDanger,
             new Behaviors.Fight(),
+            eatBoid,
             new Behaviors.Wander()
         );
     }
@@ -376,7 +356,7 @@ public partial class Fish : RigidBody3D {
     public override void _Process(double delta) {
         base._Process(delta);
         if (Input.IsActionJustPressed("call_sharks")) {
-            GD.Print("call_sharks");
+            GD.Print(Name + ": CALL SHARKS");
             WasCalled = true;
             CallLocation = GetTree().Root.GetCamera3D().GlobalPosition;
         }
