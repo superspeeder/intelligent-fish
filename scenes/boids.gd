@@ -1,8 +1,6 @@
 extends Node3D
 class_name Boids
 
-const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
-
 ####This shit be using the packed vector for performance
 @export var boid_mesh_resource: Mesh
 @export var boid_material_resource: Material
@@ -93,7 +91,6 @@ func _ready():
 		).normalized()
 		
 		var boid_position = random_dir * randf() * spawn_radius
-		#var boid:Node3D = boid_res.instantiate()
 		
 		boid_positions.append(boid_position)
 		boid_velocity.append(random_vel)

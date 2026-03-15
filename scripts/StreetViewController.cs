@@ -9,8 +9,10 @@ public partial class StreetViewController : Node3D
 		FreeFly = 1
 	}
 
-	[Export] public MovementMode StartMode = MovementMode.StreetView;
+	[Export] public MovementMode StartMode = MovementMode.FreeFly;
 	[Export] public Key ToggleModeKey = Key.Tab;
+	[Export] public Key SpawnSmallFishKey = Key.Key1;
+	[Export] public Key SpawnLargeFishKey = Key.Key2;
 
 	[Export] public NodePath PlayerRigPath = "PlayerRig";
 	[Export] public NodePath CameraPath = "PlayerRig/Camera3D";
@@ -33,13 +35,21 @@ public partial class StreetViewController : Node3D
 	[Export] public float FreeFlySpeedMetersPerSecond = 8.0f;
 	[Export] public float FreeFlyVerticalSpeedMetersPerSecond = 5.5f;
 
+	[ExportCategory("Spawning")]
+	[Export] public PackedScene SmallFishScene = GD.Load<PackedScene>("res://scenes/boids.tscn");
+	[Export] public PackedScene LargeFishScene = GD.Load<PackedScene>("res://fish/fish.tscn");
+
+	[Export] public Node3D BoidsNode;
+	
 	private const string TargetIndexMeta = "target_index";
+	private const string BigFishGroup = "bigfish";
 
 	private Node3D _playerRig = null!;
 	private Camera3D _camera = null!;
 	private Node3D _navigationPointsRoot = null!;
 	private Node3D _arrowRoot = null!;
 	private StandardMaterial3D _arrowMaterial = null!;
+	private CanvasLayer _controlsOverlay = null!;
 
 	private readonly List<Marker3D> _points = new();
 
@@ -59,6 +69,7 @@ public partial class StreetViewController : Node3D
 
 		BuildArrowMaterial();
 		CollectNavigationPoints();
+		BuildControlsOverlay();
 
 		_yaw = _playerRig.Rotation.Y;
 		_pitch = _camera.Rotation.X;
@@ -124,13 +135,29 @@ public partial class StreetViewController : Node3D
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
+		MaybeDismissControlsOverlay(@event);
+
 		if (@event is InputEventKey keyEvent &&
 			keyEvent.Pressed &&
-			!keyEvent.Echo &&
-			keyEvent.Keycode == ToggleModeKey)
+			!keyEvent.Echo)
 		{
-			ToggleMovementMode();
-			return;
+			if (keyEvent.Keycode == SpawnSmallFishKey || keyEvent.PhysicalKeycode == SpawnSmallFishKey)
+			{
+				SpawnSmallFish();
+				return;
+			}
+
+			if (keyEvent.Keycode == SpawnLargeFishKey || keyEvent.PhysicalKeycode == SpawnLargeFishKey)
+			{
+				SpawnLargeFish();
+				return;
+			}
+
+			if (keyEvent.Keycode == ToggleModeKey || keyEvent.PhysicalKeycode == ToggleModeKey)
+			{
+				ToggleMovementMode();
+				return;
+			}
 		}
 
 		if (@event is InputEventKey escapeEvent &&
@@ -160,6 +187,45 @@ public partial class StreetViewController : Node3D
 	private void ToggleMovementMode()
 	{
 		SetMovementMode(_currentMode == MovementMode.StreetView ? MovementMode.FreeFly : MovementMode.StreetView);
+	}
+
+	private void SpawnSmallFish()
+	{
+		if (SmallFishScene == null)
+		{
+			GD.PushWarning("SmallFishScene is not assigned.");
+			return;
+		}
+
+		if (SmallFishScene.Instantiate() is not Node3D smallFish)
+		{
+			GD.PushWarning("SmallFishScene must instantiate as a Node3D.");
+			return;
+		}
+
+		AddChild(smallFish);
+		smallFish.GlobalPosition = _playerRig.GlobalPosition;
+	}
+
+	private void SpawnLargeFish()
+	{
+		if (LargeFishScene == null)
+		{
+			GD.PushWarning("LargeFishScene is not assigned.");
+			return;
+		}
+
+		if (LargeFishScene.Instantiate() is not Node3D largeFish)
+		{
+			GD.PushWarning("LargeFishScene must instantiate as a Node3D.");
+			return;
+		}
+
+		Fish largeFishFish = (Fish)largeFish;
+		largeFishFish.boids = BoidsNode;
+		AddChild(largeFish);
+		largeFish.AddToGroup(BigFishGroup);
+		largeFish.GlobalPosition = _playerRig.GlobalPosition;
 	}
 
 	private void SetMovementMode(MovementMode mode, bool force = false)
@@ -451,6 +517,71 @@ public partial class StreetViewController : Node3D
 		_arrowMaterial.EmissionEnabled = true;
 		_arrowMaterial.Emission = new Color(0.070588f, 0.439216f, 0.811765f, 1.0f);
 		_arrowMaterial.Roughness = 0.25f;
+	}
+
+	private void BuildControlsOverlay()
+	{
+		_controlsOverlay = new CanvasLayer();
+		_controlsOverlay.Name = "ControlsOverlay";
+		AddChild(_controlsOverlay);
+
+		ColorRect background = new ColorRect();
+		background.Name = "ControlsBackground";
+		background.Color = new Color(0.015686f, 0.062745f, 0.101961f, 0.84f);
+		background.MouseFilter = Control.MouseFilterEnum.Ignore;
+		background.AnchorLeft = 0.5f;
+		background.AnchorTop = 0.5f;
+		background.AnchorRight = 0.5f;
+		background.AnchorBottom = 0.5f;
+		background.OffsetLeft = -220.0f;
+		background.OffsetTop = -98.0f;
+		background.OffsetRight = 220.0f;
+		background.OffsetBottom = 98.0f;
+		_controlsOverlay.AddChild(background);
+
+		Label label = new Label();
+		label.Name = "ControlsLabel";
+		label.MouseFilter = Control.MouseFilterEnum.Ignore;
+		label.AnchorLeft = 0.5f;
+		label.AnchorTop = 0.5f;
+		label.AnchorRight = 0.5f;
+		label.AnchorBottom = 0.5f;
+		label.OffsetLeft = -185.0f;
+		label.OffsetTop = -70.0f;
+		label.OffsetRight = 185.0f;
+		label.OffsetBottom = 70.0f;
+		label.HorizontalAlignment = HorizontalAlignment.Center;
+		label.VerticalAlignment = VerticalAlignment.Center;
+		label.Text = "Controls\nWASD: Move\nSpace / Shift: Up / Down\n1: Spawn small fish\n2: Spawn large fish\nTab: Toggle mode";
+		label.LabelSettings = new LabelSettings
+		{
+			FontSize = 16,
+			LineSpacing = 3.0f,
+			FontColor = new Color(0.913725f, 0.976471f, 1.0f, 1.0f),
+			OutlineSize = 4,
+			OutlineColor = new Color(0.011765f, 0.039216f, 0.066667f, 0.95f)
+		};
+		_controlsOverlay.AddChild(label);
+	}
+
+	private void MaybeDismissControlsOverlay(InputEvent @event)
+	{
+		if (_controlsOverlay == null || !GodotObject.IsInstanceValid(_controlsOverlay))
+		{
+			return;
+		}
+
+		bool shouldDismiss =
+			(@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo) ||
+			(@event is InputEventMouseButton mouseButton && mouseButton.Pressed);
+
+		if (!shouldDismiss)
+		{
+			return;
+		}
+
+		_controlsOverlay.QueueFree();
+		_controlsOverlay = null!;
 	}
 
 	private void SnapToPoint(int index)
