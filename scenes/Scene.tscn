@@ -105,6 +105,9 @@ size = Vector2(260, 260)
 subdivide_width = 64
 subdivide_depth = 64
 
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_i2t4f"]
+points = PackedVector3Array(-100, 0, -100, -100, 0, 100, 100, 0, 100, 100, 0, -100)
+
 [node name="BoidsTest" type="Node3D" unique_id=445983557]
 script = ExtResource("1_plqpu")
 
@@ -170,3 +173,40 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 7)
 [node name="Camera3D" type="Camera3D" parent="PlayerRig" unique_id=1621777640]
 current = true
 fov = 78.0
+
+[node name="Surface_colidor" type="StaticBody3D" parent="." unique_id=377416621]
+transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, 0, 8.626841, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Surface_colidor" unique_id=909564969]
+shape = SubResource("ConvexPolygonShape3D_i2t4f")
+
+[node name="Boids" parent="." unique_id=1959174162 instance=ExtResource("5_i2t4f")]
+num_boids = 350
+spawn_radius = 5.0
+boid_vision_radius_squared = 5.0
+boid_turn_speed = 6.0
+ray_length = 3.0
+rule1_strength = 0.17
+rule2_strength = 0.62
+rule3_strength = 1.07
+rule4_strength = 6.0
+rule6_strength = 2.9
+boundary_size = 100.0
+show_debug_rays = false
+[node name="Fish" parent="." unique_id=58826899 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1495404, 19.14853, -1.8063729)
+
+[node name="Fish2" parent="." unique_id=908810632 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(-0.79800487, 0, 0.602651, 0, 1, 0, -0.602651, 0, -0.79800487, -3.1495404, 17.552252, 11.615121)
+
+[node name="Fish3" parent="." unique_id=7602158 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.59375, 17.552252, -1.8063729)
+
+[node name="Fish4" parent="." unique_id=654903258 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.19885, 19.14853, -35.06378)
+
+[node name="Fish5" parent="." unique_id=552191330 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(-0.79800487, 0, 0.602651, 0, 1, 0, -0.602651, 0, -0.79800487, 48.17344, 17.552252, 3.7540731)
+
+[node name="Fish6" parent="." unique_id=2086992231 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.42282, 17.552252, -27.49432)

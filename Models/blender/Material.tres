@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://5u0lqrqgl7f"]
+
+[ext_resource type="Texture2D" uid="uid://b4rssa4iswtuj" path="res://Models/blender/textures/Tiburón_azul_(Prionace_glauca),_canal_Fayal-Pico,_islas_Azores,_Portugal,_2020-07-27,_DD_31.jpg" id="1_wb5vr"]
+
+[resource]
+resource_name = "Material"
+cull_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("1_wb5vr")

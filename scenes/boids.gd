@@ -12,6 +12,7 @@ const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
 @export var boid_speed:float = 1.5
 @export var boid_turn_speed:float = 1.5
 @export var ray_length:float = 1.5
+@export var run_from_player_squared:float = 9
 
 ##steer to avoid crowding local flockmates
 @export_range(0.0, 6.0, 0.01) var rule1_strength: float = 1
@@ -21,9 +22,12 @@ const boid_res: PackedScene = preload("res://Models/blender/fish.blend")
 @export_range(0.0, 6.0, 0.01) var rule3_strength: float = 1
 ##obstical avoidance
 @export_range(0.0, 6.0, 0.01) var rule4_strength: float = 1
-#@export_range(0.0, 6.0, 0.01) var rule5_strength: float = 1
 
-@export var boundary_size: float = 10
+#@export_range(0.0, 6.0, 0.01) var rule5_strength: float = 1
+##Move away from player
+@export_range(0.0, 6.0, 0.01) var rule6_strength: float = 1
+
+@export var boundary_size: float = 150
 
 ##show raycasts
 @export var show_debug_rays: bool = true
@@ -37,9 +41,12 @@ var boid_velocity := PackedVector3Array()
 
 var boid_meshs: MultiMeshInstance3D = MultiMeshInstance3D.new();
 
+var player_cam :Camera3D;
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
+	player_cam = get_viewport().get_camera_3d()
 	
 	var multi_mesh = MultiMesh.new()
 	multi_mesh.transform_format = MultiMesh.TRANSFORM_3D
@@ -49,7 +56,6 @@ func _ready():
 	multi_mesh.mesh = boid_mesh_resource
 	
 	for i in range(num_boids):
-		
 		multi_mesh.set_instance_custom_data(i, Color(randf(), randf(), randf(), randf()))
 
 	
@@ -122,6 +128,7 @@ func _physics_process(delta):
 		var rule3: Vector3 = Vector3(0, 0, 0) #steer to move towards the average position (center of mass) of local flockmates
 		var rule4: Vector3 = Vector3(0, 0, 0) #obstical avoidance
 		#var rule5: Vector3 = Vector3(0, 0, 0) #goal seeking to be implemented
+		var rule6: Vector3 = Vector3(0, 0, 0) #obstical avoidance
 		
 		number_of_boids_near = 0
 		
@@ -162,7 +169,7 @@ func _physics_process(delta):
 			var obstical_distance = boid_positions.get(boid1).distance_to(hit_point)
 			var panic_multiplier = 3.0 / max(obstical_distance, 0.1) #stronger the closer we are to a wall
 			rule4 = (wall_normal +boid_velocity.get(boid1).normalized().bounce(wall_normal))  * panic_multiplier
-			obstacle_importance_modifier = boid_turn_speed + (panic_multiplier * 10.0)
+			obstacle_importance_modifier = boid_turn_speed + (panic_multiplier * 5.0)
 		
 		#debug
 		if show_debug_rays:
@@ -181,8 +188,17 @@ func _physics_process(delta):
 			rule2 = rule2 - boid_velocity.get(boid1)
 			rule3 = rule3 - boid_positions.get(boid1)
 		
+		
+		#rule 6
+		var camera_dist = boid_positions.get(boid1).distance_squared_to(player_cam.global_position)
+		if camera_dist < run_from_player_squared:
+			
+			rule6 = boid_positions.get(boid1) -  player_cam.global_position
+		
+		
+		
 		#apply all forces/ rules and turn that shit
-		var steering_force = ((rule1 * rule1_strength) + (rule2 * rule2_strength) + (rule3 * rule3_strength))/obstacle_importance_modifier  + (rule4 * rule4_strength)
+		var steering_force = ((rule1 * rule1_strength) + (rule2 * rule2_strength) + (rule3 * rule3_strength) + (rule6 * rule6_strength))/obstacle_importance_modifier  + (rule4 * rule4_strength)
 		var current_vel = boid_velocity.get(boid1)
 		
 		var target_vel = (current_vel + steering_force ).normalized() * boid_speed
@@ -192,7 +208,7 @@ func _physics_process(delta):
 		#wrap around to the other side the boundy
 		var new_pos = boid_positions.get(boid1) + boid_velocity.get(boid1) * delta
 		new_pos.x = wrapf(new_pos.x, -boundary_size, boundary_size)
-		new_pos.y = wrapf(new_pos.y, -boundary_size, boundary_size)
+		new_pos.y = wrapf(new_pos.y, -10, 10)
 		new_pos.z = wrapf(new_pos.z, -boundary_size, boundary_size)
 		
 		boid_positions.set(boid1, new_pos)
@@ -203,7 +219,6 @@ func _physics_process(delta):
 	#debug
 	if show_debug_rays:
 		debug_mesh.surface_end()
-
 	pass
 
 
