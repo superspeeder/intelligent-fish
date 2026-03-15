@@ -14,6 +14,10 @@ public class Selector<T> : BehaviorTree<T> {
         this.children = children;
     }
 
+    public Selector(params BehaviorTree<T>[] children) {
+        this.children = new(children);
+    }
+
 
     public override bool Execute(T data) {
         foreach (var child in children) {
@@ -31,6 +35,10 @@ public class Sequence<T> : BehaviorTree<T> {
 
     public Sequence(List<BehaviorTree<T>> children) {
         this.children = children;
+    }
+
+    public Sequence(params BehaviorTree<T>[] children) {
+        this.children = new List<BehaviorTree<T>>(children);
     }
 
 
@@ -185,7 +193,7 @@ public class Behavior<T> : BehaviorTree<T> {
     public Behavior(Func<T, bool> action) {
         this.action = action;
     }
-    
+
     public override bool Execute(T data) {
         return action(data);
     }

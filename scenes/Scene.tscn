@@ -98,9 +98,9 @@ Width = 200
 Depth = 200
 Noise = SubResource("FastNoiseLite_8ruor")
 
-[node name="OceanFloor_col" type="StaticBody3D" parent="OceanFloor" unique_id=875765697]
+[node name="OceanFloor_col" type="StaticBody3D" parent="OceanFloor" unique_id=1857534811]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="OceanFloor/OceanFloor_col" unique_id=125568254]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OceanFloor/OceanFloor_col" unique_id=1144867013]
 shape = SubResource("ConcavePolygonShape3D_d35k2")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=806813805]
@@ -148,5 +148,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 7)
 current = true
 fov = 78.0
 
-[node name="Fish" parent="." unique_id=58826899 instance=ExtResource("6_5kwoq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1495404, 5.1806283, -1.8063729)
+[node name="Fish" parent="." unique_id=58826899 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1495404, 19.14853, -1.8063729)
+
+[node name="Fish2" parent="." unique_id=908810632 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(-0.79800487, 0, 0.602651, 0, 1, 0, -0.602651, 0, -0.79800487, -3.1495404, 17.552252, 11.615121)
+
+[node name="Fish3" parent="." unique_id=7602158 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.59375, 17.552252, -1.8063729)
+
+[node name="Fish4" parent="." unique_id=654903258 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.19885, 19.14853, -35.06378)
+
+[node name="Fish5" parent="." unique_id=552191330 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(-0.79800487, 0, 0.602651, 0, 1, 0, -0.602651, 0, -0.79800487, 48.17344, 17.552252, 3.7540731)
+
+[node name="Fish6" parent="." unique_id=2086992231 groups=["bigfish"] instance=ExtResource("6_5kwoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.42282, 17.552252, -27.49432)
