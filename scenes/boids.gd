@@ -56,7 +56,6 @@ func _ready():
 	multi_mesh.mesh = boid_mesh_resource
 	
 	for i in range(num_boids):
-		
 		multi_mesh.set_instance_custom_data(i, Color(randf(), randf(), randf(), randf()))
 
 	
