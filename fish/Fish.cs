@@ -40,10 +40,12 @@ namespace Behaviors {
                     }
                 }
             }
-
+            
             if (closest != null) {
                 data.FocusTimer = 3.0f;
                 data.TargetedFish = closest;
+                GD.Print("FIGHT");
+                return true;
             }
 
             return false;
@@ -54,6 +56,8 @@ namespace Behaviors {
         public override bool Execute(Fish data) {
             if (data.GlobalPosition.Y > 8.8) {
                 data.GravityScale = 1.0f;
+                data.TargetDirection.Y = 0.0f;
+                data.TargetedLocation.Y = 8.8f;
                 return true;
             }
 
@@ -64,13 +68,19 @@ namespace Behaviors {
 
     class CheckFocus : BehaviorTree<Fish> {
         public override bool Execute(Fish data) {
-            data.FocusTimer = Math.Max(0.0f, data.FocusTimer - (float)data.GetPhysicsProcessDeltaTime());
-
             if (data.FocusTimer <= 0.0f) {
                 return false;
             }
 
             return true;
+        }
+    }
+
+    class UpdateFocusTimer : BehaviorTree<Fish> {
+        public override bool Execute(Fish data) {
+            data.FocusTimer = Math.Max(0.0f, data.FocusTimer - (float)data.GetPhysicsProcessDeltaTime());
+            // GD.Print(data.FocusTimer);
+            return false;
         }
     }
 
@@ -86,6 +96,19 @@ namespace Behaviors {
         public override bool Execute(Fish data) {
             data.FocusTimer = FocusTime;
             return child.Execute(data);
+        }
+    }
+
+    class Debug : BehaviorTree<Fish> {
+        private readonly string _text;
+
+        public Debug(String text) {
+            _text = text;
+        }
+
+        public override bool Execute(Fish data) {
+            GD.Print(_text);
+            return true;
         }
     }
 
@@ -174,6 +197,7 @@ namespace Behaviors {
         public override bool Execute(Fish data) {
             data.TargetedFish = null;
             data.FocusTimer = 0f;
+            data.LocationIsTargeted = false;
             return false;
         }
     }
@@ -191,13 +215,25 @@ namespace Behaviors {
 
     class Target : BehaviorTree<Fish> {
         private Func<Fish, Vector3> _target;
+        private bool _persist = false;
 
         public Target(Func<Fish, Vector3> target) {
             _target = target;
         }
 
+        public Target(Func<Fish, Vector3> target, bool persist) {
+            _target = target;
+            _persist = persist;
+        }
+
         public override bool Execute(Fish data) {
-            data.TargetDirection = data.GlobalPosition.DirectionTo(_target(data));
+            var target = _target(data);
+            data.TargetDirection = data.GlobalPosition.DirectionTo(target);
+            if (_persist) {
+                data.TargetedLocation = target;
+                data.LocationIsTargeted = true;
+            }
+
             return true;
         }
     }
@@ -241,6 +277,8 @@ public partial class Fish : RigidBody3D {
     public float FocusTimer = 0.0f;
 
     public Node3D TargetedFish = null;
+    public Vector3 TargetedLocation = Vector3.Zero;
+    public bool LocationIsTargeted = false;
 
     private bool clearFocus(Fish fish) {
         TargetedFish = null;
@@ -256,33 +294,43 @@ public partial class Fish : RigidBody3D {
 
         var isFocused = new Behavior<Fish>(_ => FocusTimer > 0f);
         var focusedFight = new Sequence<Fish>(
-            isFocused,
+            new Behavior<Fish>(_ => TargetedFish != null),
             new Behaviors.Modifiers {
                 SpeedModifier = 2.0f,
                 SnapModifier = 2.0f,
             },
-            new Behavior<Fish>(_ => TargetedFish != null),
             new Behaviors.Target(_ => TargetedFish.GlobalPosition)
+        );
+
+
+        var focusedTravel = new Sequence<Fish>(
+            new Behavior<Fish>(_ => LocationIsTargeted),
+            new Behaviors.Target(_ => TargetedLocation)
         );
 
         var gotoCall = new Sequence<Fish>(
             new Behavior<Fish>(_ => WasCalled),
-            new Sequence<Fish>(
-                new Behaviors.Focus(30.0f),
-                new Behaviors.Modifiers {
-                    SnapModifier = 3.0f,
-                    SpeedModifier = 2.0f
-                },
-                new Behaviors.Target(_ => CallLocation))
+            new Behavior<Fish>(_ => {
+                WasCalled = false;
+                return true;
+            }),
+            new Behaviors.Focus(30.0f),
+            new Behaviors.Modifiers {
+                SnapModifier = 3.0f,
+                SpeedModifier = 2.0f
+            },
+            new Behaviors.Debug("GOTO CALL"),
+            new Behaviors.Target(_ => CallLocation, true)
         );
 
         var tether = new Sequence<Fish>(
-            new Behavior<Fish>(_ => GlobalPosition.DistanceSquaredTo(Vector3.Zero) >= 625f),
+            new Behavior<Fish>(_ => GlobalPosition.DistanceSquaredTo(Vector3.Zero) >= 2500f),
             new Behaviors.Focus(30.0f),
             new Behaviors.Modifiers {
                 SpeedModifier = 1.5f,
                 SnapModifier = 3.0f
             },
+            new Behaviors.Debug("GOTO ZERO"),
             new Behaviors.Target(_ => Vector3.Zero)
         );
 
@@ -293,14 +341,30 @@ public partial class Fish : RigidBody3D {
                 SnapModifier = 6.0f,
                 SpeedModifier = 3.0f
             },
+            new Behaviors.Debug("RUN"),
             new Behaviors.MoveRandomly()
         );
 
+
         _behaviorTree = new Selector<Fish>(
+            // These always run
             new Behaviors.Bob(),
-            focusedFight,
+            new Behaviors.UpdateFocusTimer(),
+
+            // These run when focused (in order, may exit execution early)
+            new Sequence<Fish>(
+                isFocused,
+                new Selector<Fish>(
+                    focusedFight,
+                    focusedTravel
+                )
+            ),
+
+            // These prevent escaping focus states
             new Behaviors.CheckFocus(),
             new Behaviors.ClearFocus(),
+
+            // These run when unfocused (in order, may exit execution early)
             gotoCall,
             tether,
             runFromDanger,
