@@ -45,10 +45,20 @@ public partial class terrainGenerator : MeshInstance3D
 				
 				float plantNoise = Noise.GetNoise2D(x + 100, z + 100);
 				
-				if (plantNoise > PlantDensityThreshold)
+				if (plantNoise > PlantDensityThreshold && GD.Randf() < 0.15f)
 				{
-					Vector3 plantPos = vertexPosition + new Vector3(0, 1.0f, 0);
-					Transform3D t = new Transform3D(Basis.Identity, vertexPosition);
+					float offsetX = (float)GD.RandRange(-0.4, 0.4);
+					float offsetZ = (float)GD.RandRange(-0.4, 0.4);
+					
+					float terrainY = Noise.GetNoise2D(x + offsetX, z + offsetZ) * HeightMultiplier;
+					
+					float scaleY = (float)GD.RandRange(0.5, 2.5);
+					float scaleXZ = (float)GD.RandRange(0.4, 1.2);
+					
+					Vector3 plantPos = new Vector3(x + offsetX - (Width / 2f), terrainY + (1.0f * scaleY), z + offsetZ - (Depth / 2f));
+					
+					Transform3D t = new Transform3D(Basis.Identity, plantPos);
+					t = t.ScaledLocal(new Vector3(scaleXZ, scaleY, scaleXZ));
 					plantTransforms.Add(t);
 				}
 			}
