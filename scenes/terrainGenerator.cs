@@ -28,7 +28,7 @@ public partial class terrainGenerator : MeshInstance3D
 	{
 		SurfaceTool st = new SurfaceTool();
 		st.Begin(Mesh.PrimitiveType.Triangles);
-		
+
 		List<Transform3D> plantTransforms = new List<Transform3D>();
 
 		// Generate Vertices
@@ -38,13 +38,13 @@ public partial class terrainGenerator : MeshInstance3D
 			{
 				float y = Noise.GetNoise2D(x, z) * HeightMultiplier;
 				st.SetUV(new Vector2((float)x / Width, (float)z / Depth));
-				
+
 				// Define vertexPosition first so both the mesh and the plant can use it
 				Vector3 vertexPosition = new Vector3(x - (Width / 2f), y, z - (Depth / 2f));
 				st.AddVertex(vertexPosition);
-				
+
 				float plantNoise = Noise.GetNoise2D(x + 100, z + 100);
-				
+
 				if (plantNoise > PlantDensityThreshold && GD.Randf() < 0.15f)
 				{
 					float offsetX = (float)GD.RandRange(-0.4, 0.4);
@@ -80,14 +80,14 @@ public partial class terrainGenerator : MeshInstance3D
 				st.AddIndex(currentVertex + Width + 1);
 			}
 		}
-		
+
 		st.GenerateNormals();
 		this.Mesh = st.Commit();
-		
+
 		if (FloraMultiMesh != null && FloraMultiMesh.Multimesh != null)
 		{
 			FloraMultiMesh.Multimesh.InstanceCount = plantTransforms.Count;
-			
+
 			for (int i = 0; i < plantTransforms.Count; i++)
 			{
 				FloraMultiMesh.Multimesh.SetInstanceTransform(i, plantTransforms[i]);

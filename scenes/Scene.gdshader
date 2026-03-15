@@ -12,11 +12,12 @@ void vertex() {
     float sway_time = TIME * sway_speed + time_offset;
     
     // top to sway the most, and the root (bottom) to not move at all.
-    float sway_factor = 1.0 - UV.y; 
+	float yy = UV.y * 2.0;
+    float sway_factor = 1.0 - yy; 
     
     // Apply sine waves to the X and Z vertices
-    VERTEX.x += sin(sway_time) * sway_strength * sway_factor;
-    VERTEX.z += cos(sway_time * 0.8) * sway_strength * sway_factor;
+    VERTEX.x += sin(sway_time) * sway_strength * sway_factor * sway_factor;
+    VERTEX.z += cos(sway_time * 0.8) * sway_strength * sway_factor * sway_factor;
 }
 
 void fragment() {
