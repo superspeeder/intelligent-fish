@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://bnhin3ps4msms"]
+
+[ext_resource type="Script" uid="uid://cfpnf0ssac2n2" path="res://food/Food.cs" id="1_drx06"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_27tb4"]
+albedo_color = Color(1, 0.3529412, 0.14901961, 1)
+metallic_specular = 0.0
+clearcoat_enabled = true
+clearcoat = 0.6
+clearcoat_roughness = 0.3
+backlight_enabled = true
+backlight = Color(1, 0.62352943, 0.49411765, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_27tb4"]
+lightmap_size_hint = Vector2i(9, 8)
+material = SubResource("StandardMaterial3D_27tb4")
+radius = 0.25
+height = 1.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_27tb4"]
+radius = 0.25
+height = 1.0
+
+[node name="Food" type="RigidBody3D" unique_id=313395242 node_paths=PackedStringArray("Visuals") groups=["food"]]
+gravity_scale = 0.2
+contact_monitor = true
+max_contacts_reported = 4
+script = ExtResource("1_drx06")
+Visuals = NodePath("MeshInstance3D")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2135182569]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_27tb4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=860306431]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_27tb4")

@@ -11,7 +11,7 @@ public partial class StreetViewController : Node3D
 
 	[Export] public MovementMode StartMode = MovementMode.FreeFly;
 	[Export] public Key ToggleModeKey = Key.Tab;
-	[Export] public Key SpawnSmallFishKey = Key.Key1;
+	[Export] public Key SpawnFoodKey = Key.Key1;
 	[Export] public Key SpawnLargeFishKey = Key.Key2;
 
 	[Export] public NodePath PlayerRigPath = "PlayerRig";
@@ -36,7 +36,7 @@ public partial class StreetViewController : Node3D
 	[Export] public float FreeFlyVerticalSpeedMetersPerSecond = 5.5f;
 
 	[ExportCategory("Spawning")]
-	[Export] public PackedScene SmallFishScene = GD.Load<PackedScene>("res://scenes/boids.tscn");
+	[Export] public PackedScene FoodScene = GD.Load<PackedScene>("res://food/Food.tscn");
 	[Export] public PackedScene LargeFishScene = GD.Load<PackedScene>("res://fish/fish.tscn");
 
 	[Export] public Node3D BoidsNode;
@@ -141,9 +141,9 @@ public partial class StreetViewController : Node3D
 			keyEvent.Pressed &&
 			!keyEvent.Echo)
 		{
-			if (keyEvent.Keycode == SpawnSmallFishKey || keyEvent.PhysicalKeycode == SpawnSmallFishKey)
+			if (keyEvent.Keycode == SpawnFoodKey || keyEvent.PhysicalKeycode == SpawnFoodKey)
 			{
-				SpawnSmallFish();
+				SpawnFood();
 				return;
 			}
 
@@ -189,22 +189,23 @@ public partial class StreetViewController : Node3D
 		SetMovementMode(_currentMode == MovementMode.StreetView ? MovementMode.FreeFly : MovementMode.StreetView);
 	}
 
-	private void SpawnSmallFish()
+	private void SpawnFood()
 	{
-		if (SmallFishScene == null)
+		if (FoodScene == null)
 		{
-			GD.PushWarning("SmallFishScene is not assigned.");
+			GD.PushWarning("FoodScene is not assigned.");
 			return;
 		}
 
-		if (SmallFishScene.Instantiate() is not Node3D smallFish)
+		if (FoodScene.Instantiate() is not Node3D food)
 		{
-			GD.PushWarning("SmallFishScene must instantiate as a Node3D.");
+			GD.PushWarning("FoodScene must instantiate as a Node3D.");
 			return;
 		}
 
-		AddChild(smallFish);
-		smallFish.GlobalPosition = _playerRig.GlobalPosition;
+		AddChild(food);
+		food.AddToGroup("food");
+		food.GlobalPosition = _playerRig.GlobalPosition;
 	}
 
 	private void SpawnLargeFish()
@@ -532,7 +533,7 @@ public partial class StreetViewController : Node3D
 		background.AnchorLeft = 0.5f;
 		background.AnchorTop = 0.5f;
 		background.AnchorRight = 0.5f;
-		background.AnchorBottom = 0.5f;
+		background.AnchorBottom = 0.6f;
 		background.OffsetLeft = -220.0f;
 		background.OffsetTop = -98.0f;
 		background.OffsetRight = 220.0f;
@@ -552,7 +553,7 @@ public partial class StreetViewController : Node3D
 		label.OffsetBottom = 70.0f;
 		label.HorizontalAlignment = HorizontalAlignment.Center;
 		label.VerticalAlignment = VerticalAlignment.Center;
-		label.Text = "Controls\nWASD: Move\nSpace / Shift: Up / Down\n1: Spawn small fish\n2: Spawn large fish\nTab: Toggle mode";
+		label.Text = "Controls\nWASD: Move\nSpace / Shift: Up / Down\n1: Spawn food\n2: Spawn sharks\nTab: Toggle mode\nF: Call sharks";
 		label.LabelSettings = new LabelSettings
 		{
 			FontSize = 16,

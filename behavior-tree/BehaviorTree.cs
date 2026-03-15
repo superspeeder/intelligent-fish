@@ -150,6 +150,9 @@ public class RandomSelector<T> : BehaviorTree<T> {
         this.children = children;
     }
 
+    public RandomSelector(params BehaviorTree<T>[] children) {
+        this.children = new List<BehaviorTree<T>>(children);
+    }
 
     public override bool Execute(T data) {
         BehaviorTree<T>[] copy = new BehaviorTree<T>[children.Count];

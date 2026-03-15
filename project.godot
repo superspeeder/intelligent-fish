@@ -23,6 +23,11 @@ project/assembly_name="IntelligentFish"
 
 import/blender/enabled=false
 
+[global_group]
+
+bigfish=""
+food=""
+
 [input]
 
 call_sharks={

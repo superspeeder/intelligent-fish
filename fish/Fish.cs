@@ -32,7 +32,7 @@ namespace Behaviors {
             var boid_positions = data.boids.Get("boid_positions").AsVector3Array();
             var boid_count = data.boids.Get("num_boids").AsInt32();
             var boid_id = data.Rng.RandiRange(0, boid_count);
-            if (boid_positions[boid_id].DistanceSquaredTo(data.GlobalPosition) < 1225f) {
+            if (boid_positions[boid_id].DistanceSquaredTo(data.GlobalPosition) < 900f) {
                 data.TargetedBoid = boid_id;
                 data.BoidIsTargeted = true;
                 return true;
@@ -41,14 +41,14 @@ namespace Behaviors {
             return false;
         }
     }
-    
+
     class Fight : BehaviorTree<Fish> {
         public override bool Execute(Fish data) {
             var closestDistance2 = float.PositiveInfinity;
             Node3D closest = null;
             foreach (var fish in data.GetTree().GetNodesInGroup("bigfish")) {
                 if (fish != data && fish is Node3D fish3d) {
-                    if (fish3d.GlobalPosition.DistanceSquaredTo(data.GlobalPosition) < 225.0f) {
+                    if (fish3d.GlobalPosition.DistanceSquaredTo(data.GlobalPosition) < 400.0f) {
                         if (fish3d.GlobalPosition.DistanceSquaredTo(data.GlobalPosition) < closestDistance2) {
                             closestDistance2 = fish3d.GlobalPosition.DistanceSquaredTo(data.GlobalPosition);
                             closest = fish3d;
@@ -56,7 +56,7 @@ namespace Behaviors {
                     }
                 }
             }
-            
+
             if (closest != null) {
                 data.FocusTimer = 3.0f;
                 data.TargetedFish = closest;
@@ -144,13 +144,17 @@ namespace Behaviors {
             if (data.BoidIsTargeted) {
                 var boid_positions = data.boids.Get("boid_positions").AsVector3Array();
                 var pos = boid_positions[data.TargetedBoid];
-                if (data.GlobalPosition.DistanceSquaredTo(pos) > 25f) {
+                if (data.GlobalPosition.DistanceSquaredTo(pos) > 25f && data.NumTimeTargetBoid < 10 && data.Rng.Randf() > 0.5) {
                     data.FocusTimer = 3.0f;
+                    data.NumTimeTargetBoid++;
                     GD.Print(data.Name + ": RETARGET BOID");
                     return true; // Stop execution here
                 }
             }
+
+            data.NumTimeTargetBoid = 0;
             data.TargetedFish = null;
+            data.TargetedFood = null;
             data.FocusTimer = 0f;
             data.LocationIsTargeted = false;
             data.BoidIsTargeted = false;
@@ -206,6 +210,32 @@ namespace Behaviors {
             return true;
         }
     }
+
+    class EatFood : BehaviorTree<Fish> {
+        public override bool Execute(Fish data) {
+            var closestDistance2 = float.PositiveInfinity;
+            Node3D closest = null;
+            foreach (var food in data.GetTree().GetNodesInGroup("food")) {
+                if (food != data && food is Node3D food3d) {
+                    if (food3d.GlobalPosition.DistanceSquaredTo(data.GlobalPosition) < 225.0f) {
+                        if (food3d.GlobalPosition.DistanceSquaredTo(data.GlobalPosition) < closestDistance2) {
+                            closestDistance2 = food3d.GlobalPosition.DistanceSquaredTo(data.GlobalPosition);
+                            closest = food3d;
+                        }
+                    }
+                }
+            }
+
+            if (closest != null) {
+                data.FocusTimer = 12.0f;
+                data.TargetedFood = closest;
+                GD.Print(data.Name + ": EAT FOOD");
+                return true;
+            }
+
+            return false;
+        }
+    }
 }
 
 public partial class Fish : RigidBody3D {
@@ -234,11 +264,13 @@ public partial class Fish : RigidBody3D {
     public float FocusTimer = 0.0f;
 
     public Node3D TargetedFish = null;
+    public Node3D TargetedFood = null;
     public Vector3 TargetedLocation = Vector3.Zero;
     public bool LocationIsTargeted = false;
 
     public int TargetedBoid = 0;
     public bool BoidIsTargeted = false;
+    public int NumTimeTargetBoid = 0;
 
     private bool clearFocus(Fish fish) {
         TargetedFish = null;
@@ -251,7 +283,7 @@ public partial class Fish : RigidBody3D {
         Laser = GetNode<Node3D>("Laser");
         Rng = new RandomNumberGenerator();
         Rng.Seed = (ulong)Random.Shared.NextInt64();
-        
+
 
         var isFocused = new Behavior<Fish>(_ => FocusTimer > 0f);
         var focusedFight = new Sequence<Fish>(
@@ -262,7 +294,16 @@ public partial class Fish : RigidBody3D {
             },
             new Behaviors.Target(_ => TargetedFish.GlobalPosition)
         );
-        
+
+        var focusedEatFood = new Sequence<Fish>(
+            new Behavior<Fish>(_ => TargetedFood != null && IsInstanceValid(TargetedFood)),
+            new Behaviors.Modifiers {
+                SpeedModifier = 3.0f,
+                SnapModifier = 3.0f,
+            },
+            new Behaviors.Target(_ => TargetedFood.GlobalPosition)
+        );
+
         var focusedTravel = new Sequence<Fish>(
             new Behavior<Fish>(_ => LocationIsTargeted),
             new Behaviors.Target(_ => TargetedLocation)
@@ -292,7 +333,7 @@ public partial class Fish : RigidBody3D {
         );
 
         var eatBoid = new Sequence<Fish>(
-            new Behaviors.Focus(8.0f),
+            new Behaviors.Focus(5.0f),
             new Behaviors.Modifiers {
                 SnapModifier = 3.0f,
                 SpeedModifier = 5.0f
@@ -334,6 +375,7 @@ public partial class Fish : RigidBody3D {
                 isFocused,
                 new Selector<Fish>(
                     focusedFight,
+                    focusedEatFood,
                     focusedEat,
                     focusedTravel
                 )
@@ -347,8 +389,11 @@ public partial class Fish : RigidBody3D {
             gotoCall,
             tether,
             runFromDanger,
-            new Behaviors.Fight(),
-            eatBoid,
+            new RandomSelector<Fish>(
+                new Behaviors.Fight(),
+                eatBoid,
+                new Behaviors.EatFood()
+            ),
             new Behaviors.Wander()
         );
     }

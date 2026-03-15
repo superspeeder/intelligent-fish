@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://p8s3hmwsjnid"]
 
 [ext_resource type="Script" uid="uid://cg5t87ru34yly" path="res://fish/Fish.cs" id="1_jx7ej"]
-[ext_resource type="ArrayMesh" uid="uid://cu2q00f5u4yt4" path="res://Models/blender/shark_Cube.res" id="2_sgogb"]
+[ext_resource type="ArrayMesh" uid="uid://dxxbxoxl35k0" path="res://Models/blender/shark_Cube.res" id="2_sgogb"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jx7ej"]
 bounce = 0.6
@@ -39,7 +39,7 @@ points = PackedVector3Array(-0.5071697, 0.29011637, 0.18261465, -0.5071697, 0.10
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_jeltl"]
 points = PackedVector3Array(-3.7526155, -1.3788375, -0.09556094, -4.7718215, 0.47556666, 0.08988947, -3.0108137, 0.011822671, -0.0028357357, -4.216396, -1.4716625, 0.08988947, -6.069974, 0.3827416, -0.09556094, -6.1628537, 0.3827416, 0.08988947, -3.2891438, 0.104647726, -0.09556094, -3.0108137, -0.63699955, 0.08988947, -4.123516, -1.4716625, -0.09556094, -3.0108137, -0.63699955, -0.09556094, -4.864701, 0.47556666, -0.09556094, -3.474594, 0.19728217, 0.08988947, -3.7526155, -1.3788375, 0.08988947, -6.1628537, 0.47556666, -0.0028357357, -6.1628537, 0.3827416, -0.0028357357, -3.0108137, 0.011822671, 0.08988947, -4.216396, -1.4716625, -0.0028357357, -3.0108137, -0.08081174, -0.09556094, -6.1628537, 0.47556666, 0.08988947, -6.069974, 0.47556666, -0.09556094, -3.474594, 0.19728217, -0.0028357357, -3.938066, -1.4716625, 0.08988947, -3.938066, -1.4716625, -0.09556094, -3.845495, 0.29010722, 0.08988947, -4.4018464, 0.3827416, -0.09556094)
 
-[node name="Fish" type="RigidBody3D" unique_id=908810632]
+[node name="Fish" type="RigidBody3D" unique_id=908810632 groups=["bigfish"]]
 physics_material_override = SubResource("PhysicsMaterial_jx7ej")
 gravity_scale = 0.0
 linear_damp = 0.5
