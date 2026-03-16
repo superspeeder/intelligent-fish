@@ -91,6 +91,7 @@ func _ready():
 		).normalized()
 		
 		var boid_position = random_dir * randf() * spawn_radius
+		boid_position.y = boid_position.y + 10
 		
 		boid_positions.append(boid_position)
 		boid_velocity.append(random_vel)
@@ -206,7 +207,7 @@ func _physics_process(delta):
 		#wrap around to the other side the boundy
 		var new_pos = boid_positions.get(boid1) + boid_velocity.get(boid1) * delta
 		new_pos.x = wrapf(new_pos.x, -boundary_size, boundary_size)
-		new_pos.y = wrapf(new_pos.y, -10, 10)
+		new_pos.y = wrapf(new_pos.y, -30, 30)
 		new_pos.z = wrapf(new_pos.z, -boundary_size, boundary_size)
 		
 		boid_positions.set(boid1, new_pos)
