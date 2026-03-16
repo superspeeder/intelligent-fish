@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://cxpnn4gm3fleq"]
+
+[ext_resource type="PackedScene" uid="uid://dftoeuwbbmb1x" path="res://scenes/crab.tscn" id="1_pyg0h"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pyg0h"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_v2hwi"]
+sky_material = SubResource("ProceduralSkyMaterial_pyg0h")
+
+[sub_resource type="Environment" id="Environment_qby6u"]
+background_mode = 2
+sky = SubResource("Sky_v2hwi")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="crabTest" type="Node3D" unique_id=1272131817]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1431104432]
+environment = SubResource("Environment_qby6u")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=558504061]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1916803963]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.67550826, 0)
+use_collision = true
+size = Vector3(20, 1, 20)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=2002361377]
+transform = Transform3D(0.72488165, -0.35234022, 0.5919485, 6.384795e-10, 0.8592993, 0.51147306, -0.6888734, -0.37075743, 0.6228903, 1.6404471, 1.3707924, 1.7872276)
+
+[node name="Crab" parent="." unique_id=89770970 instance=ExtResource("1_pyg0h")]
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=2072822983]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.449882, -4.1595545, -5.6825886)
+use_collision = true
+radius = 5.3569884
+radial_segments = 30
+rings = 20

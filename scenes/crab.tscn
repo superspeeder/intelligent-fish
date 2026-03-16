@@ -1,0 +1,229 @@
+[gd_scene format=3 uid="uid://dftoeuwbbmb1x"]
+
+[ext_resource type="PackedScene" uid="uid://q80ug5t1mrg1" path="res://Models/blender/crab.blend" id="1_ow7wl"]
+[ext_resource type="Script" uid="uid://blma5uaoyladq" path="res://scripts/crab.gd" id="1_rq6vx"]
+[ext_resource type="Script" uid="uid://db3qesufd7i0x" path="res://scripts/StartIk.gd" id="2_2b8bq"]
+[ext_resource type="Script" uid="uid://7oshe3dlr4rh" path="res://scripts/StepRay.gd" id="4_83q5x"]
+[ext_resource type="Script" uid="uid://du836vyra5bmx" path="res://scripts/stepTarget.gd" id="4_rftv6"]
+[ext_resource type="Script" uid="uid://dbm4p78vldm1a" path="res://scripts/stepContainer.gd" id="5_hj1h3"]
+
+[node name="Crab" type="Node3D" unique_id=89770970]
+script = ExtResource("1_rq6vx")
+
+[node name="crab" parent="." unique_id=762360246 instance=ExtResource("1_ow7wl")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="FirstLeft" type="SkeletonIK3D" parent="crab/body/Skeleton3D" parent_id_path=PackedInt32Array(762360246, 423849544) index="1" unique_id=866279376]
+root_bone = &"firstLeg1.L"
+tip_bone = &"firstLegik.L"
+use_magnet = true
+magnet = Vector3(0, 10, 0)
+target_node = NodePath("../../FirstLeftIkTarget")
+script = ExtResource("2_2b8bq")
+
+[node name="SecondLeft" type="SkeletonIK3D" parent="crab/body/Skeleton3D" parent_id_path=PackedInt32Array(762360246, 423849544) index="2" unique_id=1491337433]
+root_bone = &"secondLeg1.L"
+tip_bone = &"secondLegik.L"
+use_magnet = true
+magnet = Vector3(0, 10, 0)
+target_node = NodePath("../../SecondLeftIkTarget")
+script = ExtResource("2_2b8bq")
+
+[node name="ThirdLeft" type="SkeletonIK3D" parent="crab/body/Skeleton3D" parent_id_path=PackedInt32Array(762360246, 423849544) index="3" unique_id=1425504858]
+root_bone = &"thirdLeg1.L"
+tip_bone = &"thirdLegik.L"
+use_magnet = true
+magnet = Vector3(0, 10, 0)
+target_node = NodePath("../../ThirdLeftIkTarget")
+script = ExtResource("2_2b8bq")
+
+[node name="FourthLeft" type="SkeletonIK3D" parent="crab/body/Skeleton3D" parent_id_path=PackedInt32Array(762360246, 423849544) index="4" unique_id=1418665187]
+root_bone = &"fourthLeg1.L"
+tip_bone = &"fourthLegik.L"
+use_magnet = true
+magnet = Vector3(0, 10, 0)
+target_node = NodePath("../../FourthLeftIkTarget")
+script = ExtResource("2_2b8bq")
+
+[node name="FirstRight" type="SkeletonIK3D" parent="crab/body/Skeleton3D" parent_id_path=PackedInt32Array(762360246, 423849544) index="5" unique_id=368080678]
+root_bone = &"firstLeg1.R"
+tip_bone = &"firstLegik.R"
+use_magnet = true
+magnet = Vector3(0, 10, 0)
+target_node = NodePath("../../FirstRightIkTarget")
+script = ExtResource("2_2b8bq")
+
+[node name="SecondRight" type="SkeletonIK3D" parent="crab/body/Skeleton3D" parent_id_path=PackedInt32Array(762360246, 423849544) index="6" unique_id=1383094168]
+root_bone = &"secondLeg1.R"
+tip_bone = &"secondLegik.R"
+use_magnet = true
+magnet = Vector3(0, 10, 0)
+target_node = NodePath("../../SecondRightIkTarget")
+script = ExtResource("2_2b8bq")
+
+[node name="ThirdRight" type="SkeletonIK3D" parent="crab/body/Skeleton3D" parent_id_path=PackedInt32Array(762360246, 423849544) index="7" unique_id=328950997]
+root_bone = &"thirdLeg1.R"
+tip_bone = &"thirdLegik.R"
+use_magnet = true
+magnet = Vector3(0, 10, 0)
+target_node = NodePath("../../ThirdRightIkTarget")
+script = ExtResource("2_2b8bq")
+
+[node name="FourthRight" type="SkeletonIK3D" parent="crab/body/Skeleton3D" parent_id_path=PackedInt32Array(762360246, 423849544) index="8" unique_id=2130769516]
+root_bone = &"fourthLeg1.R"
+tip_bone = &"fourthLegik.R"
+use_magnet = true
+magnet = Vector3(0, 10, 0)
+target_node = NodePath("../../FourthRightIkTarget")
+script = ExtResource("2_2b8bq")
+
+[node name="FirstLeftIkTarget" type="Marker3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="1" unique_id=383805196 node_paths=PackedStringArray("step_target", "adjacent_target1")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.38817012, -0.15559095, -0.1854365)
+top_level = true
+script = ExtResource("4_rftv6")
+step_target = NodePath("../stepTargets/FirstLeftRay/FirstLeftStepTarget")
+adjacent_target1 = NodePath("../SecondLeftIkTarget")
+
+[node name="SecondLeftIkTarget" type="Marker3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="2" unique_id=1543720120 node_paths=PackedStringArray("step_target", "adjacent_target1", "adjacent_target2")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.48610145, -0.15559095, -0.029085025)
+top_level = true
+script = ExtResource("4_rftv6")
+step_target = NodePath("../stepTargets/SecondLeftRay/SecondLeftStepTarget")
+adjacent_target1 = NodePath("../FirstLeftIkTarget")
+adjacent_target2 = NodePath("../ThirdLeftIkTarget")
+
+[node name="ThirdLeftIkTarget" type="Marker3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="3" unique_id=278260040 node_paths=PackedStringArray("step_target", "adjacent_target1", "adjacent_target2")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.41434675, -0.15559095, 0.17838396)
+top_level = true
+script = ExtResource("4_rftv6")
+step_target = NodePath("../stepTargets/ThirdLeftRay/ThirdLeftStepTarget")
+adjacent_target1 = NodePath("../SecondLeftIkTarget")
+adjacent_target2 = NodePath("../FourthLeftIkTarget")
+
+[node name="FourthLeftIkTarget" type="Marker3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="4" unique_id=34234423 node_paths=PackedStringArray("step_target", "adjacent_target1")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.20996597, -0.15559095, 0.23056415)
+top_level = true
+script = ExtResource("4_rftv6")
+step_target = NodePath("../stepTargets/FourthLeftRay/FourthLeftStepTarget")
+adjacent_target1 = NodePath("../ThirdLeftIkTarget")
+
+[node name="FirstRightIkTarget" type="Marker3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="5" unique_id=1398564111 node_paths=PackedStringArray("step_target", "adjacent_target1")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.3882, -0.1556, -0.1854412)
+top_level = true
+script = ExtResource("4_rftv6")
+step_target = NodePath("../stepTargets/FirstRightRay/FirstRightStepTarget")
+adjacent_target1 = NodePath("../SecondRightIkTarget")
+
+[node name="SecondRightIkTarget" type="Marker3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="6" unique_id=515221804 node_paths=PackedStringArray("step_target", "adjacent_target1", "adjacent_target2")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.4862, -0.1556, -0.029)
+top_level = true
+script = ExtResource("4_rftv6")
+step_target = NodePath("../stepTargets/SecondRightRay/SecondRightStepTarget")
+adjacent_target1 = NodePath("../FirstRightIkTarget")
+adjacent_target2 = NodePath("../ThirdRightIkTarget")
+
+[node name="ThirdRightIkTarget" type="Marker3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="7" unique_id=1151242107 node_paths=PackedStringArray("step_target", "adjacent_target1", "adjacent_target2")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.4144, -0.1556, 0.17840001)
+top_level = true
+script = ExtResource("4_rftv6")
+step_target = NodePath("../stepTargets/ThirdRightRay/ThirdRightStepTarget")
+adjacent_target1 = NodePath("../SecondRightIkTarget")
+adjacent_target2 = NodePath("../FourthRightIkTarget")
+
+[node name="FourthRightIkTarget" type="Marker3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="8" unique_id=1840598964 node_paths=PackedStringArray("step_target", "adjacent_target1")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.21, -0.1556, 0.2306)
+top_level = true
+script = ExtResource("4_rftv6")
+step_target = NodePath("../stepTargets/RayCast3D/FourthRightStepTarget")
+adjacent_target1 = NodePath("../ThirdRightIkTarget")
+
+[node name="stepTargets" type="Node3D" parent="crab/body" parent_id_path=PackedInt32Array(762360246, 942177345) index="9" unique_id=1194830314]
+script = ExtResource("5_hj1h3")
+
+[node name="FirstLeftRay" type="RayCast3D" parent="crab/body/stepTargets" unique_id=728238111 node_paths=PackedStringArray("step_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9408506, 0.6819603, -0.9271825)
+target_position = Vector3(0, -2, 0)
+script = ExtResource("4_83q5x")
+step_target = NodePath("FirstLeftStepTarget")
+
+[node name="FirstLeftStepTarget" type="Marker3D" parent="crab/body/stepTargets/FirstLeftRay" unique_id=1191135057]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.459915, 0)
+
+[node name="SecondLeftRay" type="RayCast3D" parent="crab/body/stepTargets" unique_id=1672186635 node_paths=PackedStringArray("step_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4305072, 0.6819603, -0.14542513)
+target_position = Vector3(0, -2, 0)
+script = ExtResource("4_83q5x")
+step_target = NodePath("SecondLeftStepTarget")
+
+[node name="SecondLeftStepTarget" type="Marker3D" parent="crab/body/stepTargets/SecondLeftRay" unique_id=1627643511]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.459915, 0)
+
+[node name="ThirdLeftRay" type="RayCast3D" parent="crab/body/stepTargets" unique_id=1821513986 node_paths=PackedStringArray("step_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0717337, 0.6819603, 0.8919198)
+target_position = Vector3(0, -2, 0)
+script = ExtResource("4_83q5x")
+step_target = NodePath("ThirdLeftStepTarget")
+
+[node name="ThirdLeftStepTarget" type="Marker3D" parent="crab/body/stepTargets/ThirdLeftRay" unique_id=1559339702]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.459915, 0)
+
+[node name="FourthLeftRay" type="RayCast3D" parent="crab/body/stepTargets" unique_id=148922223 node_paths=PackedStringArray("step_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0498298, 0.6819603, 1.1528207)
+target_position = Vector3(0, -2, 0)
+script = ExtResource("4_83q5x")
+step_target = NodePath("FourthLeftStepTarget")
+
+[node name="FourthLeftStepTarget" type="Marker3D" parent="crab/body/stepTargets/FourthLeftRay" unique_id=834370299]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.459915, 0)
+
+[node name="FirstRightRay" type="RayCast3D" parent="crab/body/stepTargets" unique_id=246376469 node_paths=PackedStringArray("step_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9410001, 0.68191504, -0.927206)
+target_position = Vector3(0, -2, 0)
+script = ExtResource("4_83q5x")
+step_target = NodePath("FirstRightStepTarget")
+
+[node name="FirstRightStepTarget" type="Marker3D" parent="crab/body/stepTargets/FirstRightRay" unique_id=1801670919]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.459915, 0)
+
+[node name="SecondRightRay" type="RayCast3D" parent="crab/body/stepTargets" unique_id=1918059641 node_paths=PackedStringArray("step_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.431, 0.68191504, -0.145)
+target_position = Vector3(0, -2, 0)
+script = ExtResource("4_83q5x")
+step_target = NodePath("SecondRightStepTarget")
+
+[node name="SecondRightStepTarget" type="Marker3D" parent="crab/body/stepTargets/SecondRightRay" unique_id=1712742137]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.459915, 0)
+
+[node name="ThirdRightRay" type="RayCast3D" parent="crab/body/stepTargets" unique_id=1179271437 node_paths=PackedStringArray("step_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.072, 0.68191504, 0.89200014)
+target_position = Vector3(0, -2, 0)
+script = ExtResource("4_83q5x")
+step_target = NodePath("ThirdRightStepTarget")
+
+[node name="ThirdRightStepTarget" type="Marker3D" parent="crab/body/stepTargets/ThirdRightRay" unique_id=1567377707]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.459915, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="crab/body/stepTargets" unique_id=611313579 node_paths=PackedStringArray("step_target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 0.68191504, 1.153)
+target_position = Vector3(0, -2, 0)
+script = ExtResource("4_83q5x")
+step_target = NodePath("FourthRightStepTarget")
+
+[node name="FourthRightStepTarget" type="Marker3D" parent="crab/body/stepTargets/RayCast3D" unique_id=2115351740]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.459915, 0)
+
+[node name="TimerHolder" type="Node3D" parent="crab" unique_id=409895770]
+
+[node name="turnTimer" type="Timer" parent="crab/TimerHolder" unique_id=2020153872]
+one_shot = true
+
+[node name="waitTimer" type="Timer" parent="crab/TimerHolder" unique_id=1096968755]
+one_shot = true
+
+[node name="walkTimer" type="Timer" parent="crab/TimerHolder" unique_id=551412626]
+one_shot = true
+
+[node name="walkTurnTimer" type="Timer" parent="crab/TimerHolder" unique_id=1074873078]
+one_shot = true
+
+[editable path="crab"]
