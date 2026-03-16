@@ -21,7 +21,7 @@ func _process(delta):
 	pass
 
 func step():
-	print("step")
+	#print("step")
 	var target_pos = step_target.global_position
 	var half_way = (global_position + step_target.global_position)/2
 	is_stepping = true
