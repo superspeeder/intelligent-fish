@@ -14,6 +14,7 @@ public partial class terrainGenerator : MeshInstance3D
 
 	public override void _Ready()
 	{
+		GD.Print("hello");
 		if (Noise == null)
 		{
 			Noise = new FastNoiseLite();
@@ -49,13 +50,13 @@ public partial class terrainGenerator : MeshInstance3D
 				{
 					float offsetX = (float)GD.RandRange(-0.4, 0.4);
 					float offsetZ = (float)GD.RandRange(-0.4, 0.4);
-					
-					float terrainY = Noise.GetNoise2D(x + offsetX, z + offsetZ) * HeightMultiplier;
+					GD.Print("hello");
+					float terrainY = Noise.GetNoise2D(x + offsetX, z + offsetZ) * HeightMultiplier ;
 					
 					float scaleY = (float)GD.RandRange(0.5, 2.5);
 					float scaleXZ = (float)GD.RandRange(0.4, 1.2);
 					
-					Vector3 plantPos = new Vector3(x + offsetX - (Width / 2f), terrainY + (1.0f * scaleY), z + offsetZ - (Depth / 2f));
+					Vector3 plantPos = new Vector3(x + offsetX - (Width / 2f), 0f, z + offsetZ - (Depth / 2f));
 					
 					Transform3D t = new Transform3D(Basis.Identity, plantPos);
 					t = t.ScaledLocal(new Vector3(scaleXZ, scaleY, scaleXZ));

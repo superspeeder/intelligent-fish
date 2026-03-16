@@ -70,10 +70,10 @@ func _physics_process(delta):
 		turn(delta)
 		
 	elif !wait_timer.is_stopped():
-		print("waiting")
-		
+		#print("waiting")
+		pass
 	elif !walk_timer.is_stopped():
-		print("walking")
+		#print("walking")
 		move(delta)
 	elif !walk_turn_timer.is_stopped():
 		move(delta)
@@ -84,25 +84,25 @@ func _physics_process(delta):
 		var option = randi_range(0,3)
 		match option:
 			0:#turn
-				print("set turn")
+				#print("set turn")
 				temp_turn_speed = turn_speed * -randi_range(0,1)
 				turn_timer.wait_time = randf()*3
 				turn_timer.start()
 			1:#wait
-				print("set wait")
-				wait_timer.wait_time = randf()*2
+				#print("set wait")
+				wait_timer.wait_time = randf()*.5
 				wait_timer.start()
 			2:#walk
 				temp_move_speed = move_speed * -randi_range(0,1)
 				walk_timer.wait_time = randf()*10
 				walk_timer.start()
-				print("set walk")
+				#print("set walk")
 			3:#walk and turn
 				temp_move_speed = move_speed * -randi_range(0,1)
 				temp_turn_speed = turn_speed * randf()
 				walk_turn_timer.wait_time = randf()*7
 				walk_turn_timer.start()
-				print("set turn")
+				#print("set turn")
 		
 	
 	pass

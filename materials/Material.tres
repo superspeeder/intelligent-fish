@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b4jv1a2e7grc6"]
+
+[ext_resource type="Texture2D" uid="uid://7awgde5ey28d" path="res://Models/textures/plant.tres" id="1_qhqa4"]
+
+[resource]
+resource_name = "Material"
+cull_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("1_qhqa4")
