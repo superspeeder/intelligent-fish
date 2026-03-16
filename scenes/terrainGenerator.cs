@@ -10,11 +10,11 @@ public partial class terrainGenerator : MeshInstance3D
 	[Export] public float HeightMultiplier = 15f;
 	[Export] public FastNoiseLite Noise;
 	[Export] public MultiMeshInstance3D FloraMultiMesh;
-	[Export] public float PlantDensityThreshold = 0.6f; 
+	[Export] public float PlantDensityThreshold = 0.0f; 
 
 	public override void _Ready()
 	{
-		GD.Print("hello");
+		GD.Print("burger");
 		if (Noise == null)
 		{
 			Noise = new FastNoiseLite();
@@ -56,7 +56,7 @@ public partial class terrainGenerator : MeshInstance3D
 					float scaleY = (float)GD.RandRange(0.5, 2.5);
 					float scaleXZ = (float)GD.RandRange(0.4, 1.2);
 					
-					Vector3 plantPos = new Vector3(x + offsetX - (Width / 2f), 0f, z + offsetZ - (Depth / 2f));
+					Vector3 plantPos = new Vector3(x + offsetX - (Width / 2f), terrainY, z + offsetZ - (Depth / 2f));
 					
 					Transform3D t = new Transform3D(Basis.Identity, plantPos);
 					t = t.ScaledLocal(new Vector3(scaleXZ, scaleY, scaleXZ));
