@@ -97,8 +97,9 @@ subdivide_depth = 64
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_i2t4f"]
 points = PackedVector3Array(-100, 0, -100, -100, 0, 100, 100, 0, 100, 100, 0, -100)
 
-[node name="BoidsTest" type="Node3D" unique_id=445983557]
+[node name="BoidsTest" type="Node3D" unique_id=445983557 node_paths=PackedStringArray("BoidsNode")]
 script = ExtResource("1_plqpu")
+BoidsNode = NodePath("Boids")
 
 [node name="OceanFloor" type="MeshInstance3D" parent="." unique_id=1183143812 node_paths=PackedStringArray("FloraMultiMesh")]
 material_override = SubResource("ShaderMaterial_ptav2")
@@ -108,13 +109,14 @@ Width = 200
 Depth = 200
 Noise = SubResource("FastNoiseLite_8ruor")
 FloraMultiMesh = NodePath("FloraMultiMesh")
+PlantDensityThreshold = 0.6
 
 [node name="FloraMultiMesh" type="MultiMeshInstance3D" parent="OceanFloor" unique_id=346139423]
 multimesh = SubResource("MultiMesh_5kwoq")
 
-[node name="OceanFloor_col" type="StaticBody3D" parent="OceanFloor" unique_id=363031184]
+[node name="OceanFloor_col" type="StaticBody3D" parent="OceanFloor" unique_id=673621792]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="OceanFloor/OceanFloor_col" unique_id=2143614864]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OceanFloor/OceanFloor_col" unique_id=1409770193]
 shape = SubResource("ConcavePolygonShape3D_dod7h")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=806813805]
@@ -185,23 +187,29 @@ rule6_strength = 2.9
 boundary_size = 100.0
 show_debug_rays = false
 
-[node name="Fish" parent="." unique_id=908810632 instance=ExtResource("7_5kwoq")]
+[node name="Fish" parent="." unique_id=908810632 node_paths=PackedStringArray("boids") instance=ExtResource("7_5kwoq")]
 transform = Transform3D(0.4243732, 0, 0.90548736, 0, 1, 0, -0.90548736, 0, 0.4243732, -10.942841, 8.75, -5.938574)
+boids = NodePath("../Boids")
 
-[node name="Fish2" parent="." unique_id=1900633322 instance=ExtResource("7_5kwoq")]
+[node name="Fish2" parent="." unique_id=1900633322 node_paths=PackedStringArray("boids") instance=ExtResource("7_5kwoq")]
 transform = Transform3D(-0.92038894, 0, -0.39100415, 0, 1, 0, 0.39100415, 0, -0.92038894, -8.286352, 8.75, 16.782005)
+boids = NodePath("../Boids")
 
-[node name="Fish3" parent="." unique_id=1070335029 instance=ExtResource("7_5kwoq")]
+[node name="Fish3" parent="." unique_id=1070335029 node_paths=PackedStringArray("boids") instance=ExtResource("7_5kwoq")]
 transform = Transform3D(0.35587364, 0, -0.9345341, 0, 1, 0, 0.9345341, 0, 0.35587364, 5.250169, 8.75, -11.098603)
+boids = NodePath("../Boids")
 
-[node name="Fish4" parent="." unique_id=882567589 instance=ExtResource("7_5kwoq")]
+[node name="Fish4" parent="." unique_id=882567589 node_paths=PackedStringArray("boids") instance=ExtResource("7_5kwoq")]
 transform = Transform3D(-0.83492476, 0, 0.55036414, 0, 1, 0, -0.55036414, 0, -0.83492476, 8.84162, 8.75, 14.289083)
+boids = NodePath("../Boids")
 
-[node name="Fish5" parent="." unique_id=1262564091 instance=ExtResource("7_5kwoq")]
+[node name="Fish5" parent="." unique_id=1262564091 node_paths=PackedStringArray("boids") instance=ExtResource("7_5kwoq")]
 transform = Transform3D(0.25738576, 0, -0.9663087, 0, 1, 0, 0.9663087, 0, 0.25738576, 30.097942, 8.75, 22.999695)
+boids = NodePath("../Boids")
 
-[node name="Fish6" parent="." unique_id=1300821976 instance=ExtResource("7_5kwoq")]
+[node name="Fish6" parent="." unique_id=1300821976 node_paths=PackedStringArray("boids") instance=ExtResource("7_5kwoq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.305084, 8.75, -1.6900206)
+boids = NodePath("../Boids")
 
 [node name="crabs" type="Node3D" parent="." unique_id=389728246]
 
